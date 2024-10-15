@@ -1,17 +1,18 @@
 import fs from 'node:fs';
 import { argv } from 'node:process';
-import { Scanner } from './scanner';
+import { Scanner } from './scanner.ts';
 
 
 try {
     // expected to be called node --import=tsx stewlang.ts 
-    var file = argv[2]; 
+    console.log(argv)
+    const file = argv[2]; 
     const data = fs.readFileSync(file);
 
-    const scanner = new Scanner();
-    scanner.scan(data.toString());
+    const scanner = new Scanner(data.toString());
+    scanner.scan();
 
-    var tokens = scanner.getTokens();
+    const tokens = scanner.getTokens();
     tokens.forEach(console.log);
 } catch (err) {
     console.error(err);
