@@ -1,0 +1,11 @@
+- save all state inside recipes
+    - name?
+    - recipes
+    - folders
+- save in bookmark
+- all writes to localStorage
+
+- can send your url through text
+- detects if want to import, merge
+- if name already exsits
+- handles markdown (text) or stewlang mode?

@@ -1,13 +1,13 @@
 export class Amount {
-    public readonly amount: number;
-    public readonly unit: Unit;
-
     constructor(
-        public readonly input: string,
+        public readonly amount: number,
+        public readonly unit: Unit,
     ) {
-        const { amount, unit } = Amount.parseInput(input);
-        this.amount = amount;
-        this.unit = unit;
+    }
+
+    public static fromString(input: string) {
+        const { amount, unit } = this.parseInput(input);
+        return new Amount(amount, unit);
     }
 
     private static parseInput(input: string): { amount: number; unit: Unit } {
@@ -54,7 +54,9 @@ export class Amount {
             return "TSP";
         }
 
-        if (["tbsp", "tbsps", "tablespoon", "tablespoons"].includes(unitInput)) {
+        if (
+            ["tbsp", "tbsps", "tablespoon", "tablespoons"].includes(unitInput)
+        ) {
             return "TBSP";
         }
 
