@@ -6,7 +6,7 @@ export class Scanner {
         this.scan.bind(this);
     }
 
-    public *scan(source: string) {
+    public *scan(source: string): Iterable<Token> {
         this.source = source;
         try {
             while (!this.cannotAdvance()) {
