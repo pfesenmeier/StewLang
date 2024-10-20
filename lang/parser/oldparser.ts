@@ -30,7 +30,7 @@ export class Parser {
         this.currentRecipe = new Recipe(this.takeNext().value);
 
         this.expect(
-            () => this.takeNext()?.type === TokenType.LEFT_CURLY_BRACE,
+            () => this.takeNext()?.type === TokenType.LEFT_PARENS,
             "expected a '{'",
         );
         while (this.peekNext()?.type === TokenType.NEWLINE) this.takeNext();
