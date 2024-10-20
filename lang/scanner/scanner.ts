@@ -39,15 +39,15 @@ export class Scanner {
                             current,
                         );
                         break;
-                    case "{":
+                    case "(":
                         yield this.createToken(
-                            TokenType.LEFT_CURLY_BRACE,
+                            TokenType.LEFT_PARENS,
                             current,
                         );
                         break;
-                    case "}":
+                    case ")":
                         yield this.createToken(
-                            TokenType.RIGHT_CURLY_BRACE,
+                            TokenType.RIGHT_PARENS,
                             current,
                         );
                         break;
@@ -159,8 +159,8 @@ export class Token {
 }
 
 export const TokenType = {
-    LEFT_CURLY_BRACE: 1,
-    RIGHT_CURLY_BRACE: 2,
+    LEFT_PARENS: 1,
+    RIGHT_PARENS: 2,
     DASH: 5,
     COMMA: 8,
 
