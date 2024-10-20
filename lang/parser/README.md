@@ -9,6 +9,14 @@ pbj (
   - spread peanut-butter onto jelly, 
 )
 
+## Formal Grammer 2
+
+recipe -> ingredient* EOF;
+ingredient -> amount? word+ ( detail* )
+detail -> "-" step | ingredient
+step -> words*
+word -> "abcde.."
+
 ## Formal Grammer
 
 

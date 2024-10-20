@@ -1,9 +1,13 @@
 import type { Amount } from "../scanner/amount.ts";
+import type { Step } from "./step.ts";
 
-export class Ingredient {
-        public amount?: Amount 
-        public name: string = ""
-        public text: string = ""
+export type Detail = Step | Ingredient
+
+export class Ingredient
+{
     constructor(
+        public name: string[],
+        public amount?: Amount,
+        public detail?: Detail[]
     ) {}
 }
