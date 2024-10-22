@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert/equals";
-import { Amount } from "../amount.ts";
+import { Amount } from "../scanner/amount.ts";
 
 Deno.test("it handles fractions", () => {
     const input = "1/2c"
@@ -20,4 +20,11 @@ Deno.test("it handles decimals", () => {
     const amount = Amount.fromString(input)
     assertEquals(amount.unit, "TSP")
     assertEquals(amount.amount, 0.25)
+})
+
+Deno.test("it handles 2T", () => {
+    const input = "2T"
+    const amount = Amount.fromString(input)
+    assertEquals(amount.unit, "TBSP")
+    assertEquals(amount.amount, 2)
 })

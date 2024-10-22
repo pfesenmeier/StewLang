@@ -1,7 +1,7 @@
+import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
 import { Ingredient, type Detail } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
-
 
 export class Parser {
     private index = 0;
@@ -22,23 +22,36 @@ export class Parser {
     }
 
     private ingredient() {
-        const name = this.expect(TokenType.WORD, "expected recipe name");
+        const name: string[] = []
+        let amount: Amount | undefined
+
+        if (this.match([TokenType.AMOUNT])) {
+            amount = Amount.fromString(this.getPrevious().value)
+        } 
+
+        while (this.match([TokenType.WORD])) {
+            name.push(this.getPrevious().value)
+        }
+
+        if (name.length === 0) {
+            throw new Error("expected recipe name")
+        }
 
         if (this.getCurrent()?.type === TokenType.LEFT_PARENS) {
             this.advance()
 
             if (this.getCurrent()?.type === TokenType.RIGHT_PARENS) {
                 this.advance()
-                return new Ingredient([name.value])
+                return new Ingredient(name, amount)
             }
 
             const detail = this.detail()
             this.expect(TokenType.RIGHT_PARENS, "expected right parens");
 
-            return new Ingredient([name.value], undefined, detail)
+            return new Ingredient(name, amount, detail)
         }
 
-        return new Ingredient([name.value])
+        return new Ingredient(name, amount)
     }
 
     private detail(): Detail[]
@@ -64,6 +77,17 @@ export class Parser {
         }
 
         return this.advance();
+    }
+
+    private match(tokenTypes: typeof TokenType[keyof typeof TokenType][])
+    {
+        if (tokenTypes.includes(this.getCurrent().type))
+        {
+            this.advance()
+            return true
+        }
+
+        return false
     }
 
     private advance() {
