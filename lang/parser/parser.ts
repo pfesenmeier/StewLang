@@ -29,7 +29,7 @@ export class Parser {
             amount = Amount.fromString(this.getPrevious().value)
         } 
 
-        while (this.match([TokenType.WORD])) {
+        while (!this.isAtEnd() && this.match([TokenType.WORD])) {
             name.push(this.getPrevious().value)
         }
 

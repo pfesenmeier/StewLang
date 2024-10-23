@@ -14,7 +14,8 @@ export class Amount {
         let amountEnd = 0;
 
         while (
-            !this.isWordCharacter(input, amountEnd + 1)) amountEnd++;
+            !this.isWordCharacter(input, amountEnd + 1)
+        ) amountEnd++;
 
         const amountInput = input.slice(0, amountEnd + 1);
         const amount = this.parseAmount(amountInput);
@@ -108,8 +109,8 @@ export class Amount {
     }
 
     private static isWordCharacter(input: string, index: number) {
-        const char = input.at(index)
-        if (char === undefined) return false
+        const char = input.at(index);
+        if (char === undefined) return false;
         return char.match(/[A-Za-z\-_]/) !== null;
     }
 }
