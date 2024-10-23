@@ -1,7 +1,8 @@
 import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
-import { Ingredient, type Detail } from "./ingredient.ts";
+import { type Detail, Ingredient } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
+import { Step } from "./step.ts";
 
 export class Parser {
     private index = 0;
@@ -22,50 +23,59 @@ export class Parser {
     }
 
     private ingredient() {
-        const name: string[] = []
-        let amount: Amount | undefined
+        const name: string[] = [];
+        let amount: Amount | undefined;
 
         if (this.match([TokenType.AMOUNT])) {
-            amount = Amount.fromString(this.getPrevious().value)
-        } 
+            amount = Amount.fromString(this.getPrevious().value);
+        }
 
         while (!this.isAtEnd() && this.match([TokenType.WORD])) {
-            name.push(this.getPrevious().value)
+            name.push(this.getPrevious().value);
         }
 
         if (name.length === 0) {
-            throw new Error("expected recipe name")
+            throw new Error("expected recipe name");
         }
 
         if (this.getCurrent()?.type === TokenType.LEFT_PARENS) {
-            this.advance()
+            this.advance();
 
             if (this.getCurrent()?.type === TokenType.RIGHT_PARENS) {
-                this.advance()
-                return new Ingredient(name, amount)
+                this.advance();
+                return new Ingredient(name, amount);
             }
 
-            const detail = this.detail()
+            const detail = this.detail();
             this.expect(TokenType.RIGHT_PARENS, "expected right parens");
 
-            return new Ingredient(name, amount, detail)
+            return new Ingredient(name, amount, detail);
         }
 
-        return new Ingredient(name, amount)
+        return new Ingredient(name, amount);
     }
 
-    private detail(): Detail[]
-    {
-        const detail: Detail[] = []
-        if (this.getCurrent()?.type === TokenType.DASH)
-        {
-            // TODO
+    private detail(): Detail[] {
+        const detail: Detail[] = [];
+        if (this.getCurrent()?.type === TokenType.DASH) {
+            const step: Step = this.step();
+            detail.push(step);
         } else {
-            const ingredient = this.ingredient()
-            detail.push(ingredient)
+            const ingredient = this.ingredient();
+            detail.push(ingredient);
         }
 
-        return detail
+        return detail;
+    }
+
+    step(): Step {
+        this.expect(TokenType.DASH, "expected a dash");
+
+        const words: string[] = [];
+        while (!this.isAtEnd() && this.match([TokenType.WORD])) {
+            words.push(this.getPrevious().value);
+        }
+        return new Step(words)
     }
 
     private expect(
@@ -79,15 +89,13 @@ export class Parser {
         return this.advance();
     }
 
-    private match(tokenTypes: typeof TokenType[keyof typeof TokenType][])
-    {
-        if (tokenTypes.includes(this.getCurrent().type))
-        {
-            this.advance()
-            return true
+    private match(tokenTypes: typeof TokenType[keyof typeof TokenType][]) {
+        if (tokenTypes.includes(this.getCurrent().type)) {
+            this.advance();
+            return true;
         }
 
-        return false
+        return false;
     }
 
     private advance() {
@@ -108,7 +116,7 @@ export class Parser {
     }
 
     private peek() {
-        if (this.isAtEnd()) return undefined
+        if (this.isAtEnd()) return undefined;
         return this.tokens[this.index + 1];
     }
 }

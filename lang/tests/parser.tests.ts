@@ -4,6 +4,7 @@ import { Token, TokenType } from "../scanner/scanner.ts";
 import { Recipe } from "../parser/recipe.ts";
 import { Ingredient } from "../parser/ingredient.ts";
 import { Amount } from "../scanner/amount.ts";
+import { Step } from "../parser/step.ts";
 
 Deno.test("handles one ingredient", () => {
     const input = [
@@ -92,4 +93,24 @@ Deno.test("handles nested recipe", () => {
 });
 
 Deno.test("handles steps", () => {
+    const input = [
+        new Token(TokenType.WORD, "potatoes"),
+        new Token(TokenType.LEFT_PARENS, "("),
+        new Token(TokenType.DASH, "-"),
+        new Token(TokenType.WORD, "boil"),
+        new Token(TokenType.RIGHT_PARENS, ")"),
+    ]
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["potatoes"], undefined, [
+                new Step(["boil"])
+            ])
+        ])
+    )
+
 })
+
+// newlines
