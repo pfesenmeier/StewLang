@@ -99,18 +99,93 @@ Deno.test("handles steps", () => {
         new Token(TokenType.DASH, "-"),
         new Token(TokenType.WORD, "boil"),
         new Token(TokenType.RIGHT_PARENS, ")"),
-    ]
+    ];
+
     const output = new Parser(input).parse();
 
     assertEquals(
         output,
         new Recipe([
             new Ingredient(["potatoes"], undefined, [
-                new Step(["boil"])
-            ])
-        ])
-    )
+                new Step(["boil"]),
+            ]),
+        ]),
+    );
+});
 
-})
+Deno.test("handles trailing newline separated list of ingredients", () => {
+    const input = [
+        new Token(TokenType.WORD, "potatoes"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "cream"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "butter"),
+        new Token(TokenType.NEWLINE, "\n"),
+    ];
 
-// newlines
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["potatoes"], undefined),
+            new Ingredient(["cream"], undefined),
+            new Ingredient(["butter"], undefined),
+        ]),
+    );
+});
+
+Deno.test("handles newline separated list of ingredients", () => {
+    const input = [
+        new Token(TokenType.WORD, "potatoes"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "cream"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "butter"),
+    ];
+
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["potatoes"], undefined),
+            new Ingredient(["cream"], undefined),
+            new Ingredient(["butter"], undefined),
+        ]),
+    );
+});
+
+Deno.test("handles full example", () => {
+    const input = [
+        new Token(TokenType.WORD, "potato soup"),
+        new Token(TokenType.LEFT_PARENS, "("),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.AMOUNT, "2lb"),
+        new Token(TokenType.WORD, "potatoes"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "stock"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "cream"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.DASH, "-"),
+        new Token(TokenType.WORD, "boil"),
+        new Token(TokenType.WORD, "potatoes"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.RIGHT_PARENS, ")"),
+    ];
+
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["potato soup"], undefined, [
+                new Ingredient(["potatoes"], new Amount(2, "LB")),
+                new Ingredient(["stock"]),
+                new Ingredient(["cream"]),
+                new Step(["boil", "potatoes"]),
+            ]),
+        ]),
+    );
+});

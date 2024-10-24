@@ -30,7 +30,7 @@ export class Parser {
             amount = Amount.fromString(this.getPrevious().value);
         }
 
-        while (!this.isAtEnd() && this.match([TokenType.WORD])) {
+        while (this.match([TokenType.WORD])) {
             name.push(this.getPrevious().value);
         }
 
@@ -38,31 +38,34 @@ export class Parser {
             throw new Error("expected recipe name");
         }
 
-        if (this.getCurrent()?.type === TokenType.LEFT_PARENS) {
-            this.advance();
+        if (this.match([TokenType.LEFT_PARENS])) {
+            this.consumeNewline();
 
-            if (this.getCurrent()?.type === TokenType.RIGHT_PARENS) {
-                this.advance();
+            if (this.match([TokenType.RIGHT_PARENS])) {
                 return new Ingredient(name, amount);
             }
 
             const detail = this.detail();
-            this.expect(TokenType.RIGHT_PARENS, "expected right parens");
 
             return new Ingredient(name, amount, detail);
         }
+
+        this.consumeNewline();
 
         return new Ingredient(name, amount);
     }
 
     private detail(): Detail[] {
         const detail: Detail[] = [];
-        if (this.getCurrent()?.type === TokenType.DASH) {
-            const step: Step = this.step();
-            detail.push(step);
-        } else {
-            const ingredient = this.ingredient();
-            detail.push(ingredient);
+        while (!this.match([TokenType.RIGHT_PARENS])) {
+            if (this.getCurrent()?.type === TokenType.DASH) {
+                const step: Step = this.step();
+                detail.push(step);
+            } else {
+                const ingredient = this.ingredient();
+                detail.push(ingredient);
+            }
+            this.consumeNewline();
         }
 
         return detail;
@@ -72,10 +75,11 @@ export class Parser {
         this.expect(TokenType.DASH, "expected a dash");
 
         const words: string[] = [];
-        while (!this.isAtEnd() && this.match([TokenType.WORD])) {
+        while (this.match([TokenType.WORD])) {
             words.push(this.getPrevious().value);
         }
-        return new Step(words)
+
+        return new Step(words);
     }
 
     private expect(
@@ -90,6 +94,7 @@ export class Parser {
     }
 
     private match(tokenTypes: typeof TokenType[keyof typeof TokenType][]) {
+        if (this.isAtEnd()) return false;
         if (tokenTypes.includes(this.getCurrent().type)) {
             this.advance();
             return true;
@@ -115,8 +120,9 @@ export class Parser {
         return this.tokens[this.index - 1];
     }
 
-    private peek() {
-        if (this.isAtEnd()) return undefined;
-        return this.tokens[this.index + 1];
+    private consumeNewline() {
+        if (this.match([TokenType.NEWLINE])) {
+            // consume
+        }
     }
 }

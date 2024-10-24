@@ -63,7 +63,7 @@ export class Amount {
         }
 
         if (["lb", "pound", "lbs"].includes(unitInput)) {
-            return "OZ";
+            return "LB";
         }
 
         if (["lb", "pound", "lbs"].includes(unitInput)) {
