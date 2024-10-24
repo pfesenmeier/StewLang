@@ -81,17 +81,6 @@ export class Parser {
         return new Step(words);
     }
 
-    private expect(
-        type: typeof TokenType[keyof typeof TokenType],
-        msg: string,
-    ) {
-        if (this.getCurrent().type !== type) {
-            throw new Error(msg);
-        }
-
-        return this.advance();
-    }
-
     private match(tokenTypes: typeof TokenType[keyof typeof TokenType][]) {
         if (this.isAtEnd()) return false;
         if (tokenTypes.includes(this.getCurrent().type)) {
