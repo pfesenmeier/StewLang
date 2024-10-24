@@ -59,7 +59,7 @@ export class Parser {
     private detail(): Detail[] {
         const detail: Detail[] = [];
         while (!this.match([TokenType.RIGHT_PARENS])) {
-            if (this.getCurrent()?.type === TokenType.DASH) {
+            if (this.match([TokenType.DASH])) {
                 const step: Step = this.step();
                 detail.push(step);
             } else {
@@ -73,8 +73,6 @@ export class Parser {
     }
 
     step(): Step {
-        this.expect(TokenType.DASH, "expected a dash");
-
         const words: string[] = [];
         while (this.match([TokenType.WORD])) {
             words.push(this.getPrevious().value);
