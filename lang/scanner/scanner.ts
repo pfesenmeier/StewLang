@@ -159,17 +159,17 @@ export class Token {
 }
 
 export const TokenType = {
-    LEFT_PARENS: 1,
-    RIGHT_PARENS: 2,
-    DASH: 5,
-    COMMA: 8,
+    LEFT_PARENS: "LEFT_PARENS",
+    RIGHT_PARENS: "RIGHT_PARENS",
+    DASH: "DASH",
+    COMMA: "COMMA",
 
-    NEWLINE: 4,
-    WHITESPACE: 7,
+    NEWLINE: "NEWLINE",
+    WHITESPACE: "WHITESPACE",
 
-    IDENTIFIER: 0,
-    AMOUNT: 3,
-    WORD: 6,
+    IDENTIFIER: "IDENTIFIER",
+    AMOUNT: "AMOUNT",
+    WORD: "WORD",
 };
 
 type TokenType = typeof TokenType[keyof typeof TokenType];
