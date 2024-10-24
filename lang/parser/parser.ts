@@ -7,6 +7,7 @@ import { Step } from "./step.ts";
 export class Parser {
     private index = 0;
     private ingredients: Ingredient[] = [];
+
     constructor(
         private tokens: Token[],
     ) {}
