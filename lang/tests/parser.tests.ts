@@ -193,14 +193,14 @@ Deno.test("handles full example", () => {
 });
 
 Deno.test("handles identifiers", () => {
-  const input = [
+    const input = [
         new Token(TokenType.WORD, "batter"),
         new Token(TokenType.LEFT_PARENS, "("),
         new Token(TokenType.DASH, "-"),
         new Token(TokenType.WORD, "mix"),
         new Token(TokenType.IDENTIFIER, "@dry"),
         new Token(TokenType.RIGHT_PARENS, ")"),
-    ]
+    ];
 
     const output = new Parser(input).parse();
 
@@ -210,9 +210,25 @@ Deno.test("handles identifiers", () => {
             new Ingredient(["batter"], undefined, [
                 new Step([
                     "mix",
-                    new Identifier("dry")
-                ])
-            ])
-        ])
-    )
-})
+                    new Identifier("dry"),
+                ]),
+            ]),
+        ]),
+    );
+});
+
+Deno.test("handles meta", () => {
+    const input = [
+        new Token(TokenType.META, "$title"),
+        new Token(TokenType.WORD, "my"),
+        new Token(TokenType.WORD, "grandmother's"),
+        new Token(TokenType.WORD, "recipe"),
+    ];
+
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([], { "$title": "my grandmother's recipe" }),
+    );
+});

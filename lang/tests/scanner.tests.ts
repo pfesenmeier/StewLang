@@ -120,7 +120,7 @@ Deno.test("Can parse comma", () => {
     ])
 })
 
-Deno.test("Can parse recipe details", () => {
+Deno.test("Can parse recipe meta", () => {
     const input = "$title Cauliflower Parmesean"
     const output = Array.from(scanner.scan(input))
     assertEquals(output,[

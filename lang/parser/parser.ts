@@ -8,6 +8,7 @@ import { Step, type StepWord } from "./step.ts";
 export class Parser {
     private index = 0;
     private ingredients: Ingredient[] = [];
+    private meta: Record<string, string> = {}
 
     constructor(
         private tokens: Token[],
@@ -15,10 +16,18 @@ export class Parser {
 
     public parse(): Recipe {
         this.recipe();
-        return new Recipe(this.ingredients);
+        return new Recipe(this.ingredients, this.meta);
     }
 
     private recipe() {
+        while (this.match([TokenType.META])) {
+            const key = this.getPrevious().value
+            const values: string[] = []
+            while (this.match([TokenType.WORD])) {
+                values.push(this.getPrevious().value)
+            }
+            this.meta[key] = values.join(" ")
+        }
         while (!this.isAtEnd()) {
             this.ingredients.push(this.ingredient());
         }
