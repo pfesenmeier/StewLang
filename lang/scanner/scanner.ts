@@ -70,6 +70,25 @@ export class Scanner {
                         );
                         break;
                     }
+                    case "$": {
+                        const start = this.index - 1;
+                        while (
+                            !this.cannotAdvance() &&
+                            this.isWordCharacter(this.peek())
+                        ) {
+                            this.advance();
+                        }
+
+                        const word = this.source.substring(
+                            start,
+                            this.index,
+                        );
+                        yield this.createToken(
+                            TokenType.META,
+                            word,
+                        );
+                        break;
+                    }
                     default:
                         if (this.isNumber(current)) {
                             const start = this.index - 1;
@@ -168,6 +187,7 @@ export const TokenType = {
     WHITESPACE: "WHITESPACE",
 
     IDENTIFIER: "IDENTIFIER",
+    META: "META",
     AMOUNT: "AMOUNT",
     WORD: "WORD",
 };

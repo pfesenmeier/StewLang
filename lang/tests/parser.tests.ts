@@ -5,6 +5,7 @@ import { Recipe } from "../parser/recipe.ts";
 import { Ingredient } from "../parser/ingredient.ts";
 import { Amount } from "../scanner/amount.ts";
 import { Step } from "../parser/step.ts";
+import { Identifier } from "../parser/identifier.ts";
 
 Deno.test("handles one ingredient", () => {
     const input = [
@@ -158,7 +159,8 @@ Deno.test("handles newline separated list of ingredients", () => {
 
 Deno.test("handles full example", () => {
     const input = [
-        new Token(TokenType.WORD, "potato soup"),
+        new Token(TokenType.WORD, "potato"),
+        new Token(TokenType.WORD, "soup"),
         new Token(TokenType.LEFT_PARENS, "("),
         new Token(TokenType.NEWLINE, "\n"),
         new Token(TokenType.AMOUNT, "2lb"),
@@ -180,7 +182,7 @@ Deno.test("handles full example", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["potato soup"], undefined, [
+            new Ingredient(["potato", "soup"], undefined, [
                 new Ingredient(["potatoes"], new Amount(2, "LB")),
                 new Ingredient(["stock"]),
                 new Ingredient(["cream"]),
@@ -189,3 +191,28 @@ Deno.test("handles full example", () => {
         ]),
     );
 });
+
+Deno.test("handles identifiers", () => {
+  const input = [
+        new Token(TokenType.WORD, "batter"),
+        new Token(TokenType.LEFT_PARENS, "("),
+        new Token(TokenType.DASH, "-"),
+        new Token(TokenType.WORD, "mix"),
+        new Token(TokenType.IDENTIFIER, "@dry"),
+        new Token(TokenType.RIGHT_PARENS, ")"),
+    ]
+
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["batter"], undefined, [
+                new Step([
+                    "mix",
+                    new Identifier("dry")
+                ])
+            ])
+        ])
+    )
+})

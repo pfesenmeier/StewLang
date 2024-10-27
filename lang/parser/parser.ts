@@ -1,8 +1,9 @@
 import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
+import { Identifier } from "./identifier.ts";
 import { type Detail, Ingredient } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
-import { Step } from "./step.ts";
+import { Step, type StepWord } from "./step.ts";
 
 export class Parser {
     private index = 0;
@@ -73,9 +74,14 @@ export class Parser {
     }
 
     step(): Step {
-        const words: string[] = [];
-        while (this.match([TokenType.WORD])) {
-            words.push(this.getPrevious().value);
+        const words: StepWord[] = [];
+        while (this.match([TokenType.WORD, TokenType.IDENTIFIER])) {
+            const previous = this.getPrevious()
+            if (previous.type === TokenType.WORD) {
+                words.push(previous.value);
+            } else {
+                words.push(new Identifier(previous.value.slice(1)))
+            }
         }
 
         return new Step(words);
