@@ -1,4 +1,5 @@
 export class Amount {
+    readonly __brand = "Amount"
     constructor(
         public readonly amount: number,
         public readonly unit: Unit,

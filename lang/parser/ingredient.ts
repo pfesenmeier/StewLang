@@ -5,6 +5,7 @@ export type Detail = Step | Ingredient
 
 export class Ingredient
 {
+    readonly __brand = "Ingredient"
     constructor(
         public name: string[],
         public amount?: Amount,
