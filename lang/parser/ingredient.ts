@@ -9,6 +9,6 @@ export class Ingredient
     constructor(
         public name: string[],
         public amount?: Amount,
-        public detail?: Detail[]
+        public detail?: Detail[],
     ) {}
 }

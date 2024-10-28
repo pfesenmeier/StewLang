@@ -1,5 +1,6 @@
 import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
+import { Environment } from "./environment.ts";
 import { Identifier } from "./identifier.ts";
 import { type Detail, Ingredient } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
@@ -9,6 +10,7 @@ export class Parser {
     private index = 0;
     private ingredients: Ingredient[] = [];
     private meta: Record<string, string> = {}
+    private evironment = new Environment()
 
     constructor(
         private tokens: Token[],
