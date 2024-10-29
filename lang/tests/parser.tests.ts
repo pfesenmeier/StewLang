@@ -45,7 +45,7 @@ Deno.test("handles ingredient with sub-ingredients", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["pbj"], undefined, [new Ingredient(["jelly"])]),
+            new Ingredient(["pbj"], { detail: [new Ingredient(["jelly"])] }),
         ]),
     );
 });
@@ -62,9 +62,13 @@ Deno.test("handles ingredient with amount", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["pbj"], undefined, [
-                new Ingredient(["jelly"], new Amount(2, "TBSP")),
-            ]),
+            new Ingredient(["pbj"], {
+                detail: [
+                    new Ingredient(["jelly"], {
+                        amount: new Amount(2, "TBSP"),
+                    }),
+                ],
+            }),
         ]),
     );
 });
@@ -84,11 +88,15 @@ Deno.test("handles nested recipe", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["pita", "pockets"], undefined, [
-                new Ingredient(["hummus"], undefined, [
-                    new Ingredient(["chickpeas"]),
-                ]),
-            ]),
+            new Ingredient(["pita", "pockets"], {
+                detail: [
+                    new Ingredient(["hummus"], {
+                        detail: [
+                            new Ingredient(["chickpeas"]),
+                        ],
+                    }),
+                ],
+            }),
         ]),
     );
 });
@@ -107,9 +115,11 @@ Deno.test("handles steps", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["potatoes"], undefined, [
-                new Step(["boil"]),
-            ]),
+            new Ingredient(["potatoes"], {
+                detail: [
+                    new Step(["boil"]),
+                ],
+            }),
         ]),
     );
 });
@@ -182,12 +192,16 @@ Deno.test("handles full example", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["potato", "soup"], undefined, [
-                new Ingredient(["potatoes"], new Amount(2, "LB")),
-                new Ingredient(["stock"]),
-                new Ingredient(["cream"]),
-                new Step(["boil", "potatoes"]),
-            ]),
+            new Ingredient(["potato", "soup"], {
+                detail: [
+                    new Ingredient(["potatoes"], {
+                        amount: new Amount(2, "LB"),
+                    }),
+                    new Ingredient(["stock"]),
+                    new Ingredient(["cream"]),
+                    new Step(["boil", "potatoes"]),
+                ],
+            }),
         ]),
     );
 });
@@ -207,12 +221,14 @@ Deno.test("handles identifiers", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["batter"], undefined, [
-                new Step([
-                    "mix",
-                    new Identifier("dry"),
-                ]),
-            ]),
+            new Ingredient(["batter"], {
+                detail: [
+                    new Step([
+                        "mix",
+                        new Identifier("dry"),
+                    ]),
+                ],
+            }),
         ]),
     );
 });

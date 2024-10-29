@@ -9,8 +9,8 @@ import { Step, type StepWord } from "./step.ts";
 export class Parser {
     private index = 0;
     private ingredients: Ingredient[] = [];
-    private meta: Record<string, string> = {}
-    private evironment = new Environment()
+    private meta: Record<string, string> = {};
+    private environment = new Environment();
 
     constructor(
         private tokens: Token[],
@@ -23,12 +23,12 @@ export class Parser {
 
     private recipe() {
         while (this.match([TokenType.META])) {
-            const key = this.getPrevious().value
-            const values: string[] = []
+            const key = this.getPrevious().value;
+            const values: string[] = [];
             while (this.match([TokenType.WORD])) {
-                values.push(this.getPrevious().value)
+                values.push(this.getPrevious().value);
             }
-            this.meta[key] = values.join(" ")
+            this.meta[key] = values.join(" ");
         }
         while (!this.isAtEnd()) {
             this.ingredients.push(this.ingredient());
@@ -55,17 +55,17 @@ export class Parser {
             this.consumeNewline();
 
             if (this.match([TokenType.RIGHT_PARENS])) {
-                return new Ingredient(name, amount);
+                return new Ingredient(name, { amount });
             }
 
             const detail = this.detail();
 
-            return new Ingredient(name, amount, detail);
+            return new Ingredient(name, { amount, detail });
         }
 
         this.consumeNewline();
 
-        return new Ingredient(name, amount);
+        return new Ingredient(name, { amount });
     }
 
     private detail(): Detail[] {
@@ -87,11 +87,11 @@ export class Parser {
     step(): Step {
         const words: StepWord[] = [];
         while (this.match([TokenType.WORD, TokenType.IDENTIFIER])) {
-            const previous = this.getPrevious()
+            const previous = this.getPrevious();
             if (previous.type === TokenType.WORD) {
                 words.push(previous.value);
             } else {
-                words.push(new Identifier(previous.value.slice(1)))
+                words.push(new Identifier(previous.value.slice(1)));
             }
         }
 
