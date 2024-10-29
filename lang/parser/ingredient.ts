@@ -6,7 +6,7 @@ export type Detail = Step | Ingredient;
 export class Ingredient {
     readonly __brand = "Ingredient";
     private static id_sep = ":";
-    private static name_sep = "-"
+    private static name_sep = "-";
 
     public amount?: Amount;
     public detail?: Detail[];
@@ -18,15 +18,19 @@ export class Ingredient {
             amount?: Amount;
             detail?: Detail[];
             parent?: Ingredient;
+            // test helper
+            id?: string;
         },
     ) {
         this.amount = opts?.amount;
         this.detail = opts?.detail;
 
-        if (opts?.parent) {
+        if (opts?.id) {
+            this.id = opts.id;
+        } else if (opts?.parent) {
             this.id = opts.parent.id + Ingredient.id_sep + this.name;
         } else {
-            this.id = this.name.join(Ingredient.name_sep)
+            this.id = this.name.join(Ingredient.name_sep);
         }
     }
 }

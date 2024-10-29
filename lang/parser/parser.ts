@@ -1,6 +1,5 @@
 import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
-import { Environment } from "./environment.ts";
 import { Identifier } from "./identifier.ts";
 import { type Detail, Ingredient } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
@@ -10,7 +9,6 @@ export class Parser {
     private index = 0;
     private ingredients: Ingredient[] = [];
     private meta: Record<string, string> = {};
-    private environment = new Environment();
 
     constructor(
         private tokens: Token[],
@@ -35,7 +33,7 @@ export class Parser {
         }
     }
 
-    private ingredient() {
+    private ingredient(parent?: Ingredient) {
         const name: string[] = [];
         let amount: Amount | undefined;
 
@@ -55,27 +53,29 @@ export class Parser {
             this.consumeNewline();
 
             if (this.match([TokenType.RIGHT_PARENS])) {
-                return new Ingredient(name, { amount });
+                return new Ingredient(name, { amount, parent });
             }
 
-            const detail = this.detail();
+            const ingredient = new Ingredient(name, { amount, parent });
+            const detail = this.detail(ingredient);
+            ingredient.detail = detail
 
-            return new Ingredient(name, { amount, detail });
+            return ingredient
         }
 
         this.consumeNewline();
 
-        return new Ingredient(name, { amount });
+        return new Ingredient(name, { amount, parent });
     }
 
-    private detail(): Detail[] {
+    private detail(parent?: Ingredient): Detail[] {
         const detail: Detail[] = [];
         while (!this.match([TokenType.RIGHT_PARENS])) {
             if (this.match([TokenType.DASH])) {
                 const step: Step = this.step();
                 detail.push(step);
             } else {
-                const ingredient = this.ingredient();
+                const ingredient = this.ingredient(parent);
                 detail.push(ingredient);
             }
             this.consumeNewline();

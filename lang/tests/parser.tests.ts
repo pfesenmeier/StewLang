@@ -45,7 +45,9 @@ Deno.test("handles ingredient with sub-ingredients", () => {
     assertEquals(
         output,
         new Recipe([
-            new Ingredient(["pbj"], { detail: [new Ingredient(["jelly"])] }),
+            new Ingredient(["pbj"], {
+                detail: [new Ingredient(["jelly"], { id: "pbj:jelly" })],
+            }),
         ]),
     );
 });
@@ -66,6 +68,7 @@ Deno.test("handles ingredient with amount", () => {
                 detail: [
                     new Ingredient(["jelly"], {
                         amount: new Amount(2, "TBSP"),
+                        id: "pbj:jelly",
                     }),
                 ],
             }),
@@ -92,8 +95,11 @@ Deno.test("handles nested recipe", () => {
                 detail: [
                     new Ingredient(["hummus"], {
                         detail: [
-                            new Ingredient(["chickpeas"]),
+                            new Ingredient(["chickpeas"], {
+                                id: "pita-pockets:hummus:chickpeas",
+                            }),
                         ],
+                        id: "pita-pockets:hummus",
                     }),
                 ],
             }),
@@ -196,9 +202,10 @@ Deno.test("handles full example", () => {
                 detail: [
                     new Ingredient(["potatoes"], {
                         amount: new Amount(2, "LB"),
+                        id: "potato-soup:potatoes",
                     }),
-                    new Ingredient(["stock"]),
-                    new Ingredient(["cream"]),
+                    new Ingredient(["stock"], { id: "potato-soup:stock" }),
+                    new Ingredient(["cream"], { id: "potato-soup:cream" }),
                     new Step(["boil", "potatoes"]),
                 ],
             }),
@@ -247,4 +254,19 @@ Deno.test("handles meta", () => {
         output,
         new Recipe([], { "$title": "my grandmother's recipe" }),
     );
+});
+
+Deno.test("passes parent ingredients to their children", () => {
+    const input = [
+        new Token(TokenType.WORD, "batter"),
+        new Token(TokenType.LEFT_PARENS, "("),
+        new Token(TokenType.WORD, "flour"),
+        new Token(TokenType.RIGHT_PARENS, ")"),
+    ];
+
+    const output = new Parser(input).parse();
+
+    const child = output.ingredients.at(0)?.detail?.at(0) as Ingredient;
+
+    assertEquals(child.id, "batter:flour");
 });
