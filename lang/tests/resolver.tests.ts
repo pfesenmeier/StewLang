@@ -9,10 +9,12 @@
 // could generate one, or be based on location...
 // maybe shove it into Environment class
 
+import { assertEquals } from "jsr:@std/assert/equals";
 import { Identifier } from "../parser/identifier.ts";
 import { Ingredient } from "../parser/ingredient.ts";
 import { Recipe } from "../parser/recipe.ts";
 import { Step } from "../parser/step.ts";
+import { Resolver } from "../resolver/resolver.ts";
 
 // in react app, could generate a link to id of the ingredient
 Deno.test("it resolves sibling references at top level", () => {
@@ -20,8 +22,18 @@ Deno.test("it resolves sibling references at top level", () => {
         new Ingredient(["a"]),
         new Ingredient(["b"], {
             detail: [
-                new Step(["mix", new Identifier("@a")])
+                new Step(["mix", new Identifier("@a"), "thoroughly"])
             ]
         })
     ])
+
+    new Resolver(input).resolve()
+
+    const step = input.ingredients.at(1)!.detail!.at(0)! as Step
+    const identifier = step.text.at(1) as Identifier
+
+    assertEquals(
+        identifier.ingredientId,
+        "a"
+    )
 })
