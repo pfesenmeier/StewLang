@@ -35,7 +35,11 @@ export class Resolver {
             if (id === undefined) {
                 throw new Error(`could not resolve ${identifier.name}`);
             }
-            identifier.resolve(id)
+            identifier.resolve(id);
+        }
+
+        for (const sub of subs) {
+            this.resolveIngredient(sub, env);
         }
     }
 

@@ -2,9 +2,9 @@
 // this "point" will be represented by... Environment<string, object>
 // environment will be built up with ingredient declarations...
 // since currently no way for ingredient to know about its parents
-// 
+//
 // this will allow at runtime for any interpreter to... lookup an ingredient
-// 
+//
 // for href's to work... ingredients will need unique identifier
 // could generate one, or be based on location...
 // maybe shove it into Environment class
@@ -22,18 +22,41 @@ Deno.test("it resolves sibling references at top level", () => {
         new Ingredient(["a"]),
         new Ingredient(["b"], {
             detail: [
-                new Step(["mix", new Identifier("@a"), "thoroughly"])
-            ]
-        })
-    ])
+                new Step(["mix", new Identifier("@a"), "thoroughly"]),
+            ],
+        }),
+    ]);
 
-    new Resolver(input).resolve()
+    new Resolver(input).resolve();
 
-    const step = input.ingredients.at(1)!.detail!.at(0)! as Step
-    const identifier = step.text.at(1) as Identifier
+    const step = input.ingredients.at(1)!.detail!.at(0)! as Step;
+    const identifier = step.text.at(1) as Identifier;
 
     assertEquals(
         identifier.ingredientId,
-        "a"
-    )
-})
+        "a",
+    );
+});
+
+// multi-word ingredients
+
+Deno.test("it resolves sibling references inside ingredient", () => {
+    const input = new Recipe([
+        new Ingredient(["a"], {
+            detail: [
+                new Step(["mix", new Identifier("@b")]),
+                new Ingredient(["b"], { id: "a:b" }),
+            ],
+        }),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const step = input.ingredients.at(0)!.detail!.at(0)! as Step;
+    const identifier = step.text.at(1) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "a:b",
+    );
+});
