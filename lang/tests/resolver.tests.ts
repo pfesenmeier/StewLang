@@ -8,5 +8,20 @@
 // for href's to work... ingredients will need unique identifier
 // could generate one, or be based on location...
 // maybe shove it into Environment class
+
+import { Identifier } from "../parser/identifier.ts";
+import { Ingredient } from "../parser/ingredient.ts";
+import { Recipe } from "../parser/recipe.ts";
+import { Step } from "../parser/step.ts";
+
 // in react app, could generate a link to id of the ingredient
-//
+Deno.test("it resolves sibling references at top level", () => {
+    const input = new Recipe([
+        new Ingredient(["a"]),
+        new Ingredient(["b"], {
+            detail: [
+                new Step(["mix", new Identifier("@a")])
+            ]
+        })
+    ])
+})
