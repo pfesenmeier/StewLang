@@ -38,17 +38,14 @@ Deno.test("it resolves sibling references at top level", () => {
     );
 });
 
-// multi-word ingredients
-
 Deno.test("it resolves sibling references inside ingredient", () => {
-    const input = new Recipe([
-        new Ingredient(["a"], {
-            detail: [
-                new Step(["mix", new Identifier("@b")]),
-                new Ingredient(["b"], { id: "a:b" }),
-            ],
-        }),
-    ]);
+    const parent = new Ingredient(["a"], {
+        detail: [
+            new Step(["mix", new Identifier("@b")]),
+        ],
+    });
+    parent.detail?.push(new Ingredient(["b"], { parent }));
+    const input = new Recipe([parent]);
 
     new Resolver(input).resolve();
 
@@ -60,3 +57,5 @@ Deno.test("it resolves sibling references inside ingredient", () => {
         "a:b",
     );
 });
+
+// multi-word ingredients
