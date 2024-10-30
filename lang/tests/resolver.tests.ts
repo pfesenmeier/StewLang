@@ -58,4 +58,56 @@ Deno.test("it resolves sibling references inside ingredient", () => {
     );
 });
 
-// multi-word ingredients
+Deno.test("it resolves sibling references inside ingredient", () => {
+    const input = new Recipe([
+        new Ingredient(["a"], {
+            detail: [
+                new Ingredient(["b"], { id: "a:b" }),
+                new Ingredient(["c"], {
+                    id: "a:c",
+                    detail: [
+                        new Step([new Identifier("@b")]),
+                    ],
+                }),
+            ],
+        }),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const ingredient = input.ingredients.at(0)!.detail!.at(1)! as Ingredient;
+    const step = ingredient.detail?.at(0) as Step
+    const identifier = step.text.at(0) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "a:b",
+    );
+});
+
+Deno.test("it resolves global references inside ingredient", () => {
+    const input = new Recipe([
+        new Ingredient(["d", "e"]),
+        new Ingredient(["a"], {
+            detail: [
+                new Ingredient(["b"], {
+                    id: "b:c",
+                    detail: [
+                        new Step([new Identifier("@d-e")]),
+                    ],
+                }),
+            ],
+        }),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const ingredient = input.ingredients.at(1)!.detail!.at(0)! as Ingredient;
+    const step = ingredient.detail?.at(0) as Step
+    const identifier = step.text.at(0) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "d-e",
+    );
+});
