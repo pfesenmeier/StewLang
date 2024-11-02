@@ -85,6 +85,33 @@ Deno.test("it resolves sibling references inside ingredient", () => {
     );
 });
 
+Deno.test("it resolves sibling references when referent comes second", () => {
+    const input = new Recipe([
+        new Ingredient(["a"], {
+            detail: [
+                new Ingredient(["c"], {
+                    id: "a:c",
+                    detail: [
+                        new Step([new Identifier("@b")]),
+                    ],
+                }),
+                new Ingredient(["b"], { id: "a:b" }),
+            ],
+        }),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const ingredient = input.ingredients.at(0)!.detail!.at(0)! as Ingredient;
+    const step = ingredient.detail?.at(0) as Step
+    const identifier = step.text.at(0) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "a:b",
+    );
+});
+
 Deno.test("it resolves global references inside ingredient", () => {
     const input = new Recipe([
         new Ingredient(["d", "e"]),
@@ -103,6 +130,33 @@ Deno.test("it resolves global references inside ingredient", () => {
     new Resolver(input).resolve();
 
     const ingredient = input.ingredients.at(1)!.detail!.at(0)! as Ingredient;
+    const step = ingredient.detail?.at(0) as Step
+    const identifier = step.text.at(0) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "d-e",
+    );
+});
+
+Deno.test("it resolves global references inside ingredient when referent comes second", () => {
+    const input = new Recipe([
+        new Ingredient(["a"], {
+            detail: [
+                new Ingredient(["b"], {
+                    id: "b:c",
+                    detail: [
+                        new Step([new Identifier("@d-e")]),
+                    ],
+                }),
+            ],
+        }),
+        new Ingredient(["d", "e"]),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const ingredient = input.ingredients.at(0)!.detail!.at(0)! as Ingredient;
     const step = ingredient.detail?.at(0) as Step
     const identifier = step.text.at(0) as Identifier;
 
