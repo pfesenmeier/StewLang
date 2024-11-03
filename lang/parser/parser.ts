@@ -3,11 +3,12 @@ import { type Token, TokenType } from "../scanner/scanner.ts";
 import { Identifier } from "./identifier.ts";
 import { type Detail, Ingredient } from "./ingredient.ts";
 import { Recipe } from "./recipe.ts";
+import { Statement } from "./statement.ts";
 import { Step, type StepWord } from "./step.ts";
 
 export class Parser {
     private index = 0;
-    private ingredients: Ingredient[] = [];
+    private ingredients: Statement[] = [];
     private meta: Record<string, string> = {};
 
     constructor(
@@ -29,8 +30,19 @@ export class Parser {
             this.meta[key] = values.join(" ");
         }
         while (!this.isAtEnd()) {
+            if (this.match([TokenType.PRINT])) {
+                this.ingredients.push(this.print());
+            }
+
             this.ingredients.push(this.ingredient());
         }
+    }
+
+    print(): Statement {
+        // expect left parents
+        // expect identifier
+        // expect right parens
+        throw new Error("Method not implemented.");
     }
 
     private ingredient(parent?: Ingredient) {
@@ -58,9 +70,9 @@ export class Parser {
 
             const ingredient = new Ingredient(name, { amount, parent });
             const detail = this.detail(ingredient);
-            ingredient.detail = detail
+            ingredient.detail = detail;
 
-            return ingredient
+            return ingredient;
         }
 
         this.consumeNewline();

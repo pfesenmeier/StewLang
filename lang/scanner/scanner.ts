@@ -64,6 +64,14 @@ export class Scanner {
                             start,
                             this.index,
                         );
+
+                        if (word === "@print") {
+                            yield this.createToken(
+                                TokenType.PRINT,
+                                word,
+                            );
+                            break;
+                        }
                         yield this.createToken(
                             TokenType.IDENTIFIER,
                             word,
@@ -190,6 +198,7 @@ export const TokenType = {
     META: "META",
     AMOUNT: "AMOUNT",
     WORD: "WORD",
+    PRINT: "PRINT",
 };
 
 type TokenType = typeof TokenType[keyof typeof TokenType];

@@ -129,3 +129,16 @@ Deno.test("Can parse recipe meta", () => {
         new Token(TokenType.WORD, "Parmesean"),
     ])
 })
+
+Deno.test("Can parse print statement at top level", () => {
+    const input = "@print(foo)"
+    const output = Array.from(scanner.scan(input))
+    assertEquals(output, [
+        new Token(TokenType.PRINT, "@print"),
+        new Token(TokenType.LEFT_PARENS, "("),
+        new Token(TokenType.WORD, "foo"),
+        new Token(TokenType.RIGHT_PARENS, ")"),
+    ])
+
+
+})

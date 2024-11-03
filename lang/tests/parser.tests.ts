@@ -266,7 +266,9 @@ Deno.test("passes parent ingredients to their children", () => {
 
     const output = new Parser(input).parse();
 
-    const child = output.ingredients.at(0)?.detail?.at(0) as Ingredient;
+    const child = (output.ingredients.at(0) as Ingredient).detail?.at(
+        0,
+    ) as Ingredient;
 
     assertEquals(child.id, "batter:flour");
 });

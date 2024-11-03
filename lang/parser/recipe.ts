@@ -1,9 +1,9 @@
-import type { Ingredient } from "./ingredient.ts";
+import { Statement } from "./statement.ts";
 
 export class Recipe {
     readonly __brand = "Recipe" 
     constructor(
-        public ingredients: Ingredient[],
+        public ingredients: Statement[],
         public meta: Record<string, string> = {}
     ) {}
 }
