@@ -27,6 +27,11 @@ function RootComponent() {
         >
           About
         </Link>
+        <Link
+          to="/recipes"
+        >
+          Recipes
+        </Link>
       </div>
       <hr />
       <Outlet />
