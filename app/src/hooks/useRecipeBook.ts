@@ -1,7 +1,13 @@
-import { getRouteApi } from "@tanstack/react-router";
-
-const routeApi = getRouteApi("/recipes");
-
+import { useRoute } from 'vue-router'
 export function useRecipeBook() {
-    const routeSearch = routeApi.useSearch();
+  const route = useRoute()
+  const recipes = route.query["recipes"]
+
+  if (recipes === null) return []
+
+  if (typeof recipes === "string") {
+    return [recipes]
+  }
+  return recipes
+
 }
