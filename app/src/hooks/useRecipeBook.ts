@@ -1,5 +1,5 @@
 import { useRoute } from 'vue-router'
-import { StewLang } from '@/lang'
+import { StewLang } from 'stew-lang'
 export function useRecipeBook() {
   const recipes = useRecipesFromSearchParams()
   const lang = new StewLang()

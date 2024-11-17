@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "pinia": "^2.2.4",
+    "stew-lang": "file:../lang/npm",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   },

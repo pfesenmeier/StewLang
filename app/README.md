@@ -2,6 +2,11 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
+## Deno
+
+- uses https://github.com/denoland/dnt to transform lang for consumption here
+- TODO make it so lang gets built everytime before running dev
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
