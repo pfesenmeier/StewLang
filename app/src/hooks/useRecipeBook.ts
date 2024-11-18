@@ -1,21 +1,19 @@
-import { useRoute } from 'vue-router'
 import { StewLang } from 'stew-lang'
-export function useRecipeBook() {
-  const recipes = useRecipesFromSearchParams()
-  const lang = new StewLang()
+import { useRecipesFromSearchParams } from './useRecipesFromSearchParams'
+import { computed, type Ref } from 'vue'
+import { useRecipesHardCoded } from './useRecipesHardCoded'
 
-  return recipes.map(lang.read)
+export type RecipeBookPersistenceHook = () => { recipes: Ref<string[]> }
+
+export function useRecipeBookFake() {
+  const lang = new StewLang()
+  const fakeRecipes = useRecipesHardCoded()
+  return { recipes: computed(() => fakeRecipes.recipes.value.map(lang.read)) }
 }
 
-export function useRecipesFromSearchParams(): string[] {
-  const route = useRoute()
-  const recipes = route.query["recipes"]
+export function useRecipeBook() {
+  const { recipes } = useRecipesFromSearchParams()
+  const lang = new StewLang()
 
-  if (recipes === null) return []
-
-  if (typeof recipes === "string") {
-    return [recipes]
-  }
-
-  return recipes.filter(r => r !== null)
+  return { recipes: computed(() => recipes.value.map(lang.read)) }
 }
