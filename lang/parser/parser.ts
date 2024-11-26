@@ -26,6 +26,7 @@ export class Parser {
             while (this.match([TokenType.WORD])) {
                 values.push(this.getPrevious().value);
             }
+            this.match([TokenType.NEWLINE])
             this.meta[key] = values.join(" ");
         }
         while (!this.isAtEnd()) {

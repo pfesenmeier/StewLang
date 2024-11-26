@@ -256,6 +256,28 @@ Deno.test("handles meta", () => {
     );
 });
 
+Deno.test("handles meta and ingredients", () => {
+    const input = [
+        new Token(TokenType.META, "$title"),
+        new Token(TokenType.WORD, "my"),
+        new Token(TokenType.WORD, "grandmother's"),
+        new Token(TokenType.WORD, "recipe"),
+        new Token(TokenType.NEWLINE, "\n"),
+        new Token(TokenType.WORD, "ingredient")
+    ];
+
+    const output = new Parser(input).parse();
+
+    assertEquals(
+        output,
+        new Recipe([
+            new Ingredient(["ingredient"]),
+        ], { "$title": "my grandmother's recipe" }),
+    );
+});
+
+
+
 Deno.test("passes parent ingredients to their children", () => {
     const input = [
         new Token(TokenType.WORD, "batter"),
