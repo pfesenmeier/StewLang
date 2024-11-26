@@ -92,7 +92,7 @@ export class Parser {
             if (previous.type === TokenType.WORD) {
                 words.push(previous.value);
             } else {
-                words.push(new Identifier(previous.value.slice(1)));
+                words.push(new Identifier(previous.value));
             }
         }
 
