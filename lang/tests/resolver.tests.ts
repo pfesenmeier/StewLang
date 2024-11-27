@@ -38,6 +38,27 @@ Deno.test("it resolves sibling references at top level", () => {
     );
 });
 
+Deno.test("it concats names with '-'", () => {
+    const input = new Recipe([
+        new Ingredient(["a", "b"]),
+        new Ingredient(["b"], {
+            detail: [
+                new Step(["mix", new Identifier("@a-b"), "thoroughly"]),
+            ],
+        }),
+    ]);
+
+    new Resolver(input).resolve();
+
+    const step = input.ingredients.at(1)!.detail!.at(0)! as Step;
+    const identifier = step.text.at(1) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "a-b",
+    );
+});
+
 Deno.test("it resolves sibling references inside ingredient", () => {
     const parent = new Ingredient(["a"], {
         detail: [
@@ -55,6 +76,26 @@ Deno.test("it resolves sibling references inside ingredient", () => {
     assertEquals(
         identifier.ingredientId,
         "a:b",
+    );
+});
+
+Deno.test("it resolves sibling references inside ingredient with multiple words", () => {
+    const parent = new Ingredient(["a"], {
+        detail: [
+            new Step(["mix", new Identifier("@b-c")]),
+        ],
+    });
+    parent.detail?.push(new Ingredient(["b", "c"], { parent }));
+    const input = new Recipe([parent]);
+
+    new Resolver(input).resolve();
+
+    const step = input.ingredients.at(0)!.detail!.at(0)! as Step;
+    const identifier = step.text.at(1) as Identifier;
+
+    assertEquals(
+        identifier.ingredientId,
+        "a:b-c",
     );
 });
 

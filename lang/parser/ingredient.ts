@@ -28,7 +28,8 @@ export class Ingredient {
         if (opts?.id) {
             this.id = opts.id;
         } else if (opts?.parent) {
-            this.id = opts.parent.id + Ingredient.id_sep + this.name;
+            this.id = opts.parent.id + Ingredient.id_sep +
+                this.name.join(Ingredient.name_sep);
         } else {
             this.id = this.name.join(Ingredient.name_sep);
         }

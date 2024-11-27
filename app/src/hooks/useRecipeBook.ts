@@ -9,11 +9,12 @@ export function useRecipeBookFake() {
 
   const recipes = [
     `$name Peanut Butter Sandwich Made With Jam
+     outer thing
      sandwich (
        Peanut Butter
        jam
        Bread
-       - spread @jam ff sake
+       - spread @jam @Peanut-Butter ff sake
      )`,
   ]
 

@@ -3,12 +3,12 @@
     <h1 class="text-xl">{{ recipe.meta['$name'] }}</h1>
     <div class="divide-y-2 divide-indigo-400">
       <template v-for="ingredient in recipe.ingredients" :key="ingredient.id">
-        <div class="p-2">
+        <div class="p-2" :id="'#' + ingredient.id">
           {{ ingredient.name.join(' ') }}
         </div>
         <template v-for="detail in ingredient.detail">
           <template v-if="detail.__brand === 'Ingredient'">
-            <div>{{ (detail as Ingredient).name.join(' ') }}</div>
+            <div :id="detail.id" class="bg-pink-200">{{ (detail as Ingredient).name.join(' ') }}</div>
           </template>
           <template v-else>
             <div class="flex flex-row gap-2">
@@ -17,7 +17,7 @@
                   <div>{{ word }}</div>
                 </div>
                 <div v-else>
-                  <div>{{ word.ingredientId }}</div>
+                  <a :href="'#' + word.ingredientId">{{ word.name }}</a>
                 </div>
               </template>
             </div>
