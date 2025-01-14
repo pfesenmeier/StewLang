@@ -14,7 +14,7 @@ export function useRecipeBookFake() {
        Peanut Butter
        jam
        Bread
-       - spread @jam @Peanut-Butter ff sake
+       - spread @jam @Peanut-Butter @outer-thing ff sake
      )`,
   ]
 
