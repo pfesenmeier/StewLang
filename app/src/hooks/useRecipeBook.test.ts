@@ -20,7 +20,7 @@ describe('useRecipeBookTests', () => {
 
   it('handles a single recipe', () => {
     useRecipesFromSearchParams.mockReturnValue({
-      recipes: ref(['peanut butter\njelly\n']),
+      recipes: ref(['peanut butter\njelly\n'])
     })
     const book = useRecipeBook()
     expect(book.recipes.value).toHaveLength(1)
