@@ -13,6 +13,19 @@ Deno.test("handles one ingredient", () => {
   assertEquals(output, new Recipe([new Ingredient(["pbj"])]));
 });
 
+Deno.test("handles empty token list", () => {
+  const input: Token[] = [];
+  const output = new Parser(input).parse();
+  assertEquals(output, new Recipe([]));
+});
+
+
+Deno.test("handles beginning newlines", () => {
+  const input: Token[] = [new Token(TokenType.NEWLINE, "\n")];
+  const output = new Parser(input).parse();
+  assertEquals(output, new Recipe([]));
+});
+
 Deno.test("handles empty recipe", () => {
   const input = [
     new Token(TokenType.WORD, "pbj"),

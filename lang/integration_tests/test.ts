@@ -1,5 +1,4 @@
 import { assertEquals } from "jsr:@std/assert";
-import { extname, format } from "jsr:@std/path";
 import { Recipe, StewLang } from "../mod.ts";
 import { Ingredient } from "../parser/ingredient.ts";
 
@@ -10,8 +9,7 @@ Deno.test("sample", () => {
 })
 
 Deno.test("recipe multiline", () => {
-  const sut = `
-foo 
+  const sut = `foo 
 bar
 `
   assertEquals(lang.read(sut), new Recipe([new Ingredient(["foo"]), new Ingredient(["bar"])]))
