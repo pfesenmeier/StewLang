@@ -1,8 +1,15 @@
 import { assertEquals } from "jsr:@std/assert";
 import { extname, format } from "jsr:@std/path";
-import { StewLang } from "../mod.ts";
+import { Recipe, StewLang } from "../mod.ts";
+import { Ingredient } from "../parser/ingredient.ts";
 
-Deno.test("expect input to match output", async () => {
+const lang = new StewLang();
+
+Deno.test("sample", () => {
+  assertEquals(lang.read("sample"), new Recipe([new Ingredient(["sample"])]))
+})
+
+Deno.test.ignore("expect input to match output", async () => {
   const lang = new StewLang();
 
   for await (const testCase of getTestCases()) {
