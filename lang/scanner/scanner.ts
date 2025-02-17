@@ -89,7 +89,6 @@ export class Scanner {
                             while (
                                 !this.cannotAdvance() &&
                                 (
-                                    this.isWordCharacter(this.peek()) ||
                                     this.isNumberCharacter(this.peek())
                                 )
                             ) {
@@ -102,7 +101,7 @@ export class Scanner {
                             );
 
                             yield this.createToken(
-                                TokenType.AMOUNT,
+                                TokenType.NUMBER,
                                 amount,
                             );
                         }
@@ -178,10 +177,10 @@ export const TokenType = {
 
     NEWLINE: "NEWLINE",
     WHITESPACE: "WHITESPACE",
+    NUMBER: "NUMBER",
 
     IDENTIFIER: "IDENTIFIER",
     META: "META",
-    AMOUNT: "AMOUNT",
     WORD: "WORD",
 };
 

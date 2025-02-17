@@ -104,9 +104,9 @@ Deno.test("Can parse identifier", () => {
 });
 
 Deno.test("Can parse amount", () => {
-    const input = "1/2c"
+    const input = "1/2 c"
     const output = Array.from(scanner.scan(input))
-    assertEquals(output, [new Token(TokenType.AMOUNT, "1/2c")])
+    assertEquals(output, [new Token(TokenType.NUMBER, "1/2"), new Token(TokenType.WORD, "c")])
 })
 
 Deno.test("Can parse recipe meta", () => {
