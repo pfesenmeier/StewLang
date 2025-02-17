@@ -18,12 +18,6 @@ export class Scanner {
                             current,
                         );
                         break;
-                    case ",":
-                        yield this.createToken(
-                            TokenType.COMMA,
-                            current,
-                        );
-                        break;
                     case "\r":
                         if (!this.cannotAdvance() && this.peek() === "\n") {
                             const next = this.advance();
@@ -181,7 +175,6 @@ export const TokenType = {
     LEFT_PARENS: "LEFT_PARENS",
     RIGHT_PARENS: "RIGHT_PARENS",
     DASH: "DASH",
-    COMMA: "COMMA",
 
     NEWLINE: "NEWLINE",
     WHITESPACE: "WHITESPACE",

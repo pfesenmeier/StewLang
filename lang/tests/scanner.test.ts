@@ -109,17 +109,6 @@ Deno.test("Can parse amount", () => {
     assertEquals(output, [new Token(TokenType.AMOUNT, "1/2c")])
 })
 
-Deno.test("Can parse comma", () => {
-    const input = "0.5tsp cumin, ground"
-    const output = Array.from(scanner.scan(input))
-    assertEquals(output, [
-        new Token(TokenType.AMOUNT, "0.5tsp"),
-        new Token(TokenType.WORD, "cumin"),
-        new Token(TokenType.COMMA, ","),
-        new Token(TokenType.WORD, "ground")
-    ])
-})
-
 Deno.test("Can parse recipe meta", () => {
     const input = "$title Cauliflower Parmesean"
     const output = Array.from(scanner.scan(input))
