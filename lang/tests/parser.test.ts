@@ -19,7 +19,6 @@ Deno.test("handles empty token list", () => {
   assertEquals(output, new Recipe([]));
 });
 
-
 Deno.test("handles beginning newlines", () => {
   const input: Token[] = [new Token(TokenType.NEWLINE, "\n")];
   const output = new Parser(input).parse();

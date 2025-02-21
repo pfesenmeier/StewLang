@@ -1,1 +1,1 @@
-export * from './sdk/main.ts'
+export * from "./sdk/main.ts";
