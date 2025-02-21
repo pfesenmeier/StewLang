@@ -41,7 +41,14 @@ export class Parser {
     const name: string[] = [];
     let amount: Amount | undefined;
 
-    if (this.match([TokenType.AMOUNT])) {
+    if (this.match([TokenType.NUMBER])) {
+      const number = this.getPrevious()
+      let unit: Token | null = null
+
+      if (this.match([TokenType.WORD])) {
+        unit = this.getPrevious()
+      }
+
       amount = Amount.fromString(this.getPrevious().value);
     }
 

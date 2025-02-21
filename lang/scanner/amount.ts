@@ -1,3 +1,6 @@
+import { Token } from "./scanner.ts";
+
+type Input = { amount: Token, unit: Token }
 export class Amount {
     readonly __brand = "Amount"
     constructor(
@@ -6,23 +9,15 @@ export class Amount {
     ) {
     }
 
-    public static fromString(input: string) {
+    public static parse(input: Input) {
         const { amount, unit } = this.parseInput(input);
         return new Amount(amount, unit);
     }
 
-    private static parseInput(input: string): { amount: number; unit: Unit } {
-        let amountEnd = 0;
+    private static parseInput(input: Input): { amount: number; unit: Unit } {
+        const amount = this.parseAmount(input.amount.value);
 
-        while (
-            !this.isWordCharacter(input, amountEnd + 1)
-        ) amountEnd++;
-
-        const amountInput = input.slice(0, amountEnd + 1);
-        const amount = this.parseAmount(amountInput);
-
-        const unitInput = input.slice(amountEnd + 1);
-        const unit = this.parseUnit(unitInput);
+        const unit = this.parseUnit(input.unit.value);
 
         return { amount, unit };
     }
@@ -107,12 +102,6 @@ export class Amount {
             return numerator / denominator;
         }
         return parseFloat(amountInput);
-    }
-
-    private static isWordCharacter(input: string, index: number) {
-        const char = input.at(index);
-        if (char === undefined) return false;
-        return char.match(/[A-Za-z\-_]/) !== null;
     }
 }
 
