@@ -1,4 +1,4 @@
-import { Amount, UnitType } from "../scanner/amount.ts";
+import { Amount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
 import { Identifier } from "./identifier.ts";
 import { type Detail, Ingredient } from "./ingredient.ts";
