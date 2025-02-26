@@ -16,19 +16,20 @@
 
 #buttons {
   display: flex;
-  gap: 1em;
-  justify-content: center;
-  border: solid;
+  border: solid 0.15rem;
   border-radius: 0.5rem;
 
+  /* between border */ 
   &> :not(:last-child) {
     border-inline-start-width: 0px;
-    border-inline-end: 0.2rem solid;
+    border-inline-end: 0.15rem solid;
   }
 }
 
-
 .button {
-  padding: 0.2rem;
+  padding: 0.1rem 4rem; 
+  width: 12rem;
+  text-align: center;
 }
+
 </style>
