@@ -7,3 +7,4 @@ export class Recipe {
     public meta: Record<string, string> = {},
   ) {}
 }
+
