@@ -16,26 +16,24 @@ export class Resolver {
   }
 
   private resolveIngredient(ingredient: Ingredient, env: Environment) {
-    const subs = ingredient.detail?.filter((d) => d.__brand === "Ingredient") ??
-      [];
+    const subs = ingredient.ingredients ?? [];
     env = new Environment(env);
     for (const sub of subs) {
-      env.define(sub.name, sub.id);
+      env.define(sub.name, sub);
     }
 
     // TODO can an ingredient refer to itself?
-    const steps = ingredient.detail
-      ?.filter((d) => d.__brand === "Step") ?? [];
+    const steps = ingredient.steps ?? []
     const identifiers = steps
       .map((step) => step.text)
       .map((text) => text.filter((t) => typeof t !== "string")).flat();
 
     for (const identifier of identifiers) {
-      const id = env.getId(identifier.name);
-      if (id === undefined) {
+      const ingredient = env.getIngredient(identifier.name);
+      if (ingredient === undefined) {
         throw new Error(`could not resolve ${identifier.name}`);
       }
-      identifier.resolve(id);
+      identifier.ingredient = ingredient
     }
 
     for (const sub of subs) {
@@ -46,7 +44,7 @@ export class Resolver {
   private resolveGlobals(): Environment {
     const env = new Environment();
     for (const ingredient of this.recipe.ingredients) {
-      env.define(ingredient.name, ingredient.id);
+      env.define(ingredient.name, ingredient);
     }
 
     return env;

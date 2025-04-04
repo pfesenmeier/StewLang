@@ -1,18 +1,6 @@
-export class Identifier {
-  readonly __brand = "Identifier";
-  private _ingredientId: string | undefined;
+import { Ingredient } from "./ingredient.ts";
 
-  public get ingredientId(): string | undefined {
-    return this._ingredientId;
-  }
-  private set ingredientId(value: string | undefined) {
-    this._ingredientId = value;
-  }
-  constructor(
-    public name: string,
-  ) {}
-
-  public resolve(ingredientId: string) {
-    this.ingredientId = ingredientId;
-  }
+export type Identifier = {
+  name: string
+  ingredient?: Ingredient 
 }
