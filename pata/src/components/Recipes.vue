@@ -1,9 +1,0 @@
-<template>
-      <h2>Recipes</h2>
-      <nav>
-        <ul>
-          <li>one</li>
-          <li>two</li>
-        </ul>
-      </nav>
-</template>
