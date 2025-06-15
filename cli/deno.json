@@ -1,0 +1,25 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/cli": "jsr:@std/cli@^1.0.19",
+    "@std/fs": "jsr:@std/fs@^1.0.18",
+    "@std/path": "jsr:@std/path@^1.1.0",
+    "@types/ink": "npm:@types/ink@^2.0.3",
+    "@types/react": "npm:@types/react@^19.1.7",
+    "@xstate/react": "npm:@xstate/react@^5.0.5",
+    "ink": "npm:ink@^6.0.0",
+    "react": "npm:react@^19.1.0",
+    "xstate": "npm:xstate@^5.19.4"
+  },
+  "compilerOptions": {
+    "types": [
+      "react",
+      "@types/react"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}
