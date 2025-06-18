@@ -1,11 +1,17 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/path@^1.1.0": "1.1.0",
     "npm:@types/react@^19.1.7": "19.1.7",
     "npm:ink@6": "6.0.0_@types+react@19.1.7_react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
     "npm:xstate@*": "5.19.4",
     "npm:xstate@^5.19.4": "5.19.4"
+  },
+  "jsr": {
+    "@std/path@1.1.0": {
+      "integrity": "ddc94f8e3c275627281cbc23341df6b8bcc874d70374f75fec2533521e3d6886"
+    }
   },
   "npm": {
     "@alcalzone/ansi-tokenize@0.1.3": {
