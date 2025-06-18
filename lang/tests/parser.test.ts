@@ -10,7 +10,19 @@ import { Identifier } from "../parser/identifier.ts";
 Deno.test("handles one ingredient", () => {
   const input = [new Token(TokenType.WORD, "pbj")];
   const output = new Parser(input).parse();
-  assertEquals(output, new Recipe([new Ingredient(["pbj"])]));
+  assertEquals(output, { ingredients: [{ name: ["pbj"] }] });
+});
+
+Deno.test("handles empty token list", () => {
+  const input: Token[] = [];
+  const output = new Parser(input).parse();
+  assertEquals(output, { ingredients: [] });
+});
+
+Deno.test("handles beginning newlines", () => {
+  const input: Token[] = [new Token(TokenType.NEWLINE, "\n")];
+  const output = new Parser(input).parse();
+  assertEquals(output, { ingredients: [] });
 });
 
 Deno.test("handles empty recipe", () => {
@@ -20,7 +32,7 @@ Deno.test("handles empty recipe", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(output, new Recipe([new Ingredient(["pbj"])]));
+  assertEquals(output, { ingredients: [{ name: ["pbj"] }] });
 });
 
 Deno.test("handles ingredient with two names", () => {
@@ -29,7 +41,7 @@ Deno.test("handles ingredient with two names", () => {
     new Token(TokenType.WORD, "flour"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(output, new Recipe([new Ingredient(["AP", "flour"])]));
+  assertEquals(output, { ingredients: [{ name: ["AP", "flour"] }] });
 });
 
 Deno.test("handles ingredient with sub-ingredients", () => {
@@ -40,38 +52,45 @@ Deno.test("handles ingredient with sub-ingredients", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["pbj"], {
-        detail: [new Ingredient(["jelly"], { id: "pbj:jelly" })],
-      }),
-    ]),
-  );
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["pbj"],
+        ingredients: [
+          {
+            name: ["jelly"],
+          },
+        ],
+      },
+    ],
+  });
 });
 
 Deno.test("handles ingredient with amount", () => {
   const input = [
     new Token(TokenType.WORD, "pbj"),
     new Token(TokenType.LEFT_PARENS, "("),
-    new Token(TokenType.AMOUNT, "2T"),
+    new Token(TokenType.WORD, "2T"),
     new Token(TokenType.WORD, "jelly"),
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["pbj"], {
-        detail: [
-          new Ingredient(["jelly"], {
-            amount: new Amount(2, "TBSP"),
-            id: "pbj:jelly",
-          }),
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["pbj"],
+        ingredients: [
+          {
+            name: ["jelly"],
+            amount: {
+              amount: 2,
+              unit: "TBSP",
+            },
+          },
         ],
-      }),
-    ]),
-  );
+      },
+    ],
+  });
 });
 
 Deno.test("handles nested recipe", () => {
@@ -86,23 +105,23 @@ Deno.test("handles nested recipe", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["pita", "pockets"], {
-        detail: [
-          new Ingredient(["hummus"], {
-            detail: [
-              new Ingredient(["chickpeas"], {
-                id: "pita-pockets:hummus:chickpeas",
-              }),
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["pita", "pockets"],
+        ingredients: [
+          {
+            name: ["hummus"],
+            ingredients: [
+              {
+                name: ["chickpeas"],
+              },
             ],
-            id: "pita-pockets:hummus",
-          }),
+          },
         ],
-      }),
-    ]),
-  );
+      },
+    ],
+  });
 });
 
 Deno.test("handles steps", () => {
@@ -116,14 +135,18 @@ Deno.test("handles steps", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["potatoes"], {
-        detail: [new Step(["boil"])],
-      }),
-    ]),
-  );
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["potatoes"],
+        steps: [
+          {
+            text: ["boil"],
+          },
+        ],
+      },
+    ],
+  });
 });
 
 Deno.test("handles trailing newline separated list of ingredients", () => {
@@ -138,14 +161,13 @@ Deno.test("handles trailing newline separated list of ingredients", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["potatoes"], undefined),
-      new Ingredient(["cream"], undefined),
-      new Ingredient(["butter"], undefined),
-    ]),
-  );
+  assertEquals(output, {
+    ingredients: [
+      { name: ["potatoes"] },
+      { name: ["cream"] },
+      { name: ["butter"] },
+    ],
+  });
 });
 
 Deno.test("handles newline separated list of ingredients", () => {
@@ -159,14 +181,13 @@ Deno.test("handles newline separated list of ingredients", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["potatoes"], undefined),
-      new Ingredient(["cream"], undefined),
-      new Ingredient(["butter"], undefined),
-    ]),
-  );
+  assertEquals(output, {
+    ingredients: [
+      { name: ["potatoes"] },
+      { name: ["cream"] },
+      { name: ["butter"] },
+    ],
+  });
 });
 
 Deno.test("handles full example", () => {
@@ -175,7 +196,7 @@ Deno.test("handles full example", () => {
     new Token(TokenType.WORD, "soup"),
     new Token(TokenType.LEFT_PARENS, "("),
     new Token(TokenType.NEWLINE, "\n"),
-    new Token(TokenType.AMOUNT, "2lb"),
+    new Token(TokenType.WORD, "2lb"),
     new Token(TokenType.WORD, "potatoes"),
     new Token(TokenType.NEWLINE, "\n"),
     new Token(TokenType.WORD, "stock"),
@@ -191,22 +212,25 @@ Deno.test("handles full example", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["potato", "soup"], {
-        detail: [
-          new Ingredient(["potatoes"], {
-            amount: new Amount(2, "LB"),
-            id: "potato-soup:potatoes",
-          }),
-          new Ingredient(["stock"], { id: "potato-soup:stock" }),
-          new Ingredient(["cream"], { id: "potato-soup:cream" }),
-          new Step(["boil", "potatoes"]),
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["potato", "soup"],
+        ingredients: [
+          {
+            name: ["potatoes"],
+            amount: {
+              amount: 2,
+              unit: "LB",
+            },
+          },
+          { name: ["stock"] },
+          { name: ["cream"] },
         ],
-      }),
-    ]),
-  );
+        steps: [{ text: ["boil", "potatoes"] }],
+      },
+    ],
+  });
 });
 
 Deno.test("handles identifiers", () => {
@@ -221,14 +245,18 @@ Deno.test("handles identifiers", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([
-      new Ingredient(["batter"], {
-        detail: [new Step(["mix", new Identifier("@dry")])],
-      }),
-    ]),
-  );
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["batter"],
+        steps: [
+          {
+            text: ["mix", { name: "@dry" }],
+          },
+        ],
+      },
+    ],
+  });
 });
 
 Deno.test("handles meta", () => {
@@ -241,7 +269,10 @@ Deno.test("handles meta", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(output, new Recipe([], { $title: "my grandmother's recipe" }));
+  assertEquals(output, {
+    ingredients: [],
+    meta: { $title: "my grandmother's recipe" },
+  });
 });
 
 Deno.test("handles meta and ingredients", () => {
@@ -256,12 +287,10 @@ Deno.test("handles meta and ingredients", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(
-    output,
-    new Recipe([new Ingredient(["ingredient"])], {
-      $title: "my grandmother's recipe",
-    }),
-  );
+  assertEquals(output, {
+    ingredients: [{ name: ["ingredient"]} ],
+    meta: { $title: "my grandmother's recipe" },
+  });
 });
 
 Deno.test("handles multiple metas", () => {
@@ -275,20 +304,8 @@ Deno.test("handles multiple metas", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(output, new Recipe([], { $foo: "bar", $far: "bing" }));
-});
-
-Deno.test("passes parent ingredients to their children", () => {
-  const input = [
-    new Token(TokenType.WORD, "batter"),
-    new Token(TokenType.LEFT_PARENS, "("),
-    new Token(TokenType.WORD, "flour"),
-    new Token(TokenType.RIGHT_PARENS, ")"),
-  ];
-
-  const output = new Parser(input).parse();
-
-  const child = output.ingredients.at(0)?.detail?.at(0) as Ingredient;
-
-  assertEquals(child.id, "batter:flour");
+  assertEquals(output, {
+    ingredients: [],
+    meta: { $foo: "bar", $far: "bing" },
+  });
 });
