@@ -25,7 +25,7 @@ export type Events =
   // TODO
   | { type: "toggle" };
 
-export const appMachine = setup({
+export const fileTreeMachine = setup({
   types: {
     context: {} as Context,
     events: {} as Events,
@@ -148,3 +148,4 @@ export const appMachine = setup({
     },
   },
 });
+

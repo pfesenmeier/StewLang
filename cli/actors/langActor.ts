@@ -1,9 +1,10 @@
 import { fromPromise } from "xstate";
 import { StewLang } from "../../lang/mod.ts";
+import { ActorInput } from "./helpers.ts";
 
 export const langActor = fromPromise(
   (
-    { input: { filePath } }: { input: { filePath: string | null } },
+    { input: { filePath } }: ActorInput<{ filePath: string | null }>,
   ) => preview(filePath),
 );
 

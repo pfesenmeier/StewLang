@@ -1,8 +1,8 @@
 import { useMachine } from '@xstate/react'
 import { useInput } from 'ink'
-import { appMachine } from "../actors/fileTreeActor.ts";
+import { fileTreeMachine } from "../actors/fileTreeMachine.ts";
 export function useApp(cwd: string) {
-  const [snapshot, send] = useMachine(appMachine, {
+  const [snapshot, send] = useMachine(fileTreeMachine, {
     input: {
       cwd
     }
