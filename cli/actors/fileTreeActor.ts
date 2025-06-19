@@ -1,4 +1,4 @@
-import { assign, setup } from "xstate";
+import { assign, setup, raise } from "xstate";
 import { Recipe } from "../../lang/mod.ts";
 import { lsActor } from "./lsActor.ts";
 import { joinPath, splitPath } from "./helpers.ts";
@@ -21,6 +21,8 @@ export type Events =
   | { type: "next" }
   | { type: "up" }
   | { type: "in" }
+  | { type: "up_reload" }
+  // TODO
   | { type: "toggle" };
 
 export const appMachine = setup({
@@ -30,6 +32,7 @@ export const appMachine = setup({
     input: {} as { cwd: string },
   },
   actors: {
+    // TODO -- another loading state
     // preview: previewActor,
     ls: lsActor,
   },
@@ -42,9 +45,9 @@ export const appMachine = setup({
     file_lists: [],
     max_list: 3,
   }),
-  initial: "ls",
+  initial: "loading",
   states: {
-    "ls": {
+    "loading": {
       invoke: {
         src: "ls",
         input: ({ context }) => {
@@ -52,6 +55,7 @@ export const appMachine = setup({
             return { folder: joinPath(context.base_path) };
           }
 
+          // TODO guard
           const selected = context.file_lists.map(({ items, current }) => {
             if (current === null) {
               throw new Error("tried to go in when enter is null");
@@ -86,7 +90,7 @@ export const appMachine = setup({
               const last = result.pop();
 
               if (!last) return context.file_lists;
-              if (!last.current) return context.file_lists;
+              if (last.current === null) return context.file_lists;
 
               if (last.current < last.items.length - 1) {
                 last.current++;
@@ -103,7 +107,7 @@ export const appMachine = setup({
               const last = result.pop();
 
               if (!last) return context.file_lists;
-              if (!last.current) return context.file_lists;
+              if (last.current === null) return context.file_lists;
 
               if (last.current > 0) {
                 last.current--;
@@ -114,24 +118,32 @@ export const appMachine = setup({
           }),
         },
         up: {
-          actions: assign(({ context }) => {
+          actions: [assign(({ context }) => {
             const list_length = context.file_lists.length;
 
             if (context.base_path.length === 1 && list_length === 1) {
               return {};
             } else if (list_length === 1) {
               return {
+                file_lists: context.file_lists.slice(0, -1),
                 base_path: context.base_path.slice(0, -1),
               };
             }
 
-            return ({
+            return {
               file_lists: context.file_lists.slice(0, -1),
-            });
+            };
           }),
-          target: "ls",
+            raise({ type: 'up_reload' })
+          ]
         },
-        in: "ls",
+        up_reload: [ {
+          guard: ({ context }) => context.file_lists.length === 0, 
+          target: "loading",
+          },
+          { target: "ready" }
+        ],
+        in: 'loading',
       },
     },
   },

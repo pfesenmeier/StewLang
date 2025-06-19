@@ -1,4 +1,4 @@
-import { parse } from "path";
+import { parse } from "@std/path";
 import { fromPromise } from "xstate";
 import { ActorInput } from "./helpers.ts";
 
