@@ -17,4 +17,3 @@ export const lsActor = fromPromise(
     return fileNames;
   },
 );
-

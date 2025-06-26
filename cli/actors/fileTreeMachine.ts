@@ -1,7 +1,13 @@
-import { assign, setup, raise } from "xstate";
+import { assign, raise, sendTo, setup } from "xstate";
 import { Recipe } from "../../lang/mod.ts";
 import { lsActor } from "./lsActor.ts";
-import { joinPath, splitPath } from "./helpers.ts";
+import type { AppActor } from "./appMachine.ts";
+import {
+  joinPath,
+  loadSelected,
+  splitPath,
+  toggleSelected,
+} from "./helpers.ts";
 
 export type Context = {
   // absolute path
@@ -9,11 +15,12 @@ export type Context = {
   // could be null if folder is empty
   current_item: string | null;
   // absolute paths
-  select_files: string[];
+  selected_files: string[];
   // could be null if folder is empty
   current_preview: Recipe | Error | null;
-  file_lists: { items: string[]; current: number | null }[];
+  file_lists: { items: string[]; current: number | null; selected: number[] }[];
   max_list: 3;
+  appRef: AppActor;
 };
 
 export type Events =
@@ -22,14 +29,13 @@ export type Events =
   | { type: "up" }
   | { type: "in" }
   | { type: "up_reload" }
-  // TODO
   | { type: "toggle" };
 
 export const fileTreeMachine = setup({
   types: {
     context: {} as Context,
     events: {} as Events,
-    input: {} as { cwd: string },
+    input: {} as { cwd: string; appRef: AppActor },
   },
   actors: {
     // TODO -- another loading state
@@ -37,13 +43,14 @@ export const fileTreeMachine = setup({
     ls: lsActor,
   },
 }).createMachine({
-  context: ({ input: { cwd } }) => ({
-    select_files: [],
+  context: ({ input: { cwd, appRef } }) => ({
+    selected_files: [],
     current_item: null,
     base_path: splitPath(cwd ?? "."),
     current_preview: null,
     file_lists: [],
     max_list: 3,
+    appRef,
   }),
   initial: "loading",
   states: {
@@ -70,13 +77,16 @@ export const fileTreeMachine = setup({
           return { folder: joinPath([...context.base_path, ...selected]) };
         },
         onDone: {
-          actions: assign({
-            file_lists: ({ context, event }) =>
-              context.file_lists.concat({
-                items: event.output,
-                current: event.output.length > 0 ? 0 : null,
-              }),
-          }),
+          actions: [
+            assign({
+              file_lists: ({ context, event }) =>
+                context.file_lists.concat({
+                  items: event.output,
+                  current: event.output.length > 0 ? 0 : null,
+                  selected: loadSelected(context, event.output),
+                }),
+            }),
+          ],
           target: "ready",
         },
       },
@@ -118,34 +128,41 @@ export const fileTreeMachine = setup({
           }),
         },
         up: {
-          actions: [assign(({ context }) => {
-            const list_length = context.file_lists.length;
+          actions: [
+            assign(({ context }) => {
+              const list_length = context.file_lists.length;
 
-            if (context.base_path.length === 1 && list_length === 1) {
-              return {};
-            } else if (list_length === 1) {
+              if (context.base_path.length === 1 && list_length === 1) {
+                return {};
+              } else if (list_length === 1) {
+                return {
+                  file_lists: context.file_lists.slice(0, -1),
+                  base_path: context.base_path.slice(0, -1),
+                };
+              }
+
               return {
                 file_lists: context.file_lists.slice(0, -1),
-                base_path: context.base_path.slice(0, -1),
               };
-            }
-
-            return {
-              file_lists: context.file_lists.slice(0, -1),
-            };
-          }),
-            raise({ type: 'up_reload' })
-          ]
+            }),
+            raise({ type: "up_reload" }),
+          ],
         },
-        up_reload: [ {
-          guard: ({ context }) => context.file_lists.length === 0, 
+        up_reload: [{
+          guard: ({ context }) => context.file_lists.length === 0,
           target: "loading",
-          },
-          { target: "ready" }
-        ],
-        in: 'loading',
+        }, { target: "ready" }],
+        in: "loading",
+        toggle: {
+          actions: [
+            assign(({ context }) => toggleSelected(context)),
+            sendTo(({ context }) => context.appRef, ({ context }) => ({
+              type: "SelectionUpdateEvent",
+              data: context.selected_files,
+            })),
+          ],
+        },
       },
     },
   },
 });
-
