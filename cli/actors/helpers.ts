@@ -52,35 +52,50 @@ export function getCwd(
 export function loadSelected(
   context: Pick<Context, "file_lists" | "base_path" | "selected_files">,
   names: string[],
-): number[] {
+): Pick<Context, "file_lists"> {
   const cwd = getCwd(context);
 
   const indexes: number[] = [];
   for (const [index, file] of names.entries()) {
-    const fileName = joinPath([...cwd, file]);
+    const fileName = joinPath([cwd, file]);
 
     if (context.selected_files.includes(fileName)) {
       indexes.push(index);
     }
   }
 
-  return indexes;
+  const file_lists = [...context.file_lists];
+  file_lists.at(-1)!.selected = indexes;
+
+  return { file_lists };
 }
 
 export function toggleSelected(
   context: Pick<Context, "file_lists" | "base_path" | "selected_files">,
-): Pick<Context, "selected_files"> {
+): Pick<Context, "selected_files" | "file_lists"> {
   const current = getCurrentItem(context);
 
+  if (!current.endsWith(".sw")) return context
+
   if (context.selected_files.includes(current)) {
+    const new_files = [...context.file_lists];
+    const last = new_files.at(-1)!;
+    last.selected = last.selected.filter((index) => index !== last.current);
+
     return {
+      file_lists: new_files,
       selected_files: context.selected_files.filter(
         (file) => file !== current,
       ),
     };
   }
 
+  const new_files = [...context.file_lists];
+  const last = new_files.at(-1)!;
+  last.selected.push(last.current!);
+
   return {
+    file_lists: new_files,
     selected_files: [...context.selected_files, current],
   };
 }

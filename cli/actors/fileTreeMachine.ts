@@ -83,9 +83,10 @@ export const fileTreeMachine = setup({
                 context.file_lists.concat({
                   items: event.output,
                   current: event.output.length > 0 ? 0 : null,
-                  selected: loadSelected(context, event.output),
+                  selected: [],
                 }),
             }),
+            assign(({ context, event }) => loadSelected(context, event.output))
           ],
           target: "ready",
         },

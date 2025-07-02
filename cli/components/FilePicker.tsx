@@ -6,14 +6,19 @@ export default function FilePicker({ rootDir }: { rootDir: string }) {
 
   return (
     <>
-      <Box>
+      <Box
+        flexDirection="column"
+        borderStyle="round"
+        borderColor="cyan"
+        padding={1}
+      >
         <Text>
           Selected:
         </Text>
 
         {appContext.selected_files.length > 0
           ? context.selected_files.map((name, index) => (
-            <Text key={index} color="blue">{name}</Text>
+            <Text key={index} color="blueBright">{name}</Text>
           ))
           : <Text color="red">No files selected</Text>}
       </Box>
@@ -29,7 +34,7 @@ export default function FilePicker({ rootDir }: { rootDir: string }) {
             {file.items.map((name, index) => (
               <Text
                 key={name}
-                color={file.current === index ? "blue" : undefined}
+                color={file.current === index ? "greenBright" : file.selected.includes(index) ? "yellow" : "white"}
               >
                 {name}
               </Text>
