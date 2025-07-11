@@ -1,4 +1,4 @@
-import { Ingredient } from "../parser/ingredient.ts";
+import type { Ingredient } from "../parser/ingredient.ts";
 
 export class Environment {
   private env: Record<string, Ingredient> = {};

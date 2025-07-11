@@ -1,11 +1,11 @@
 import { assertEquals } from "jsr:@std/assert/equals";
 import { Parser } from "../parser/parser.ts";
 import { Token, TokenType } from "../scanner/scanner.ts";
-import { Recipe } from "../parser/recipe.ts";
-import { Ingredient } from "../parser/ingredient.ts";
-import { Amount } from "../scanner/amount.ts";
-import { Step } from "../parser/step.ts";
-import { Identifier } from "../parser/identifier.ts";
+import type { Recipe } from "../parser/recipe.ts";
+import type { Ingredient } from "../parser/ingredient.ts";
+import type { Amount } from "../scanner/amount.ts";
+import type { Step } from "../parser/step.ts";
+import type { Identifier } from "../parser/identifier.ts";
 
 Deno.test("handles one ingredient", () => {
   const input = [new Token(TokenType.WORD, "pbj")];
