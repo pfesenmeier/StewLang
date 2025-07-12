@@ -1,4 +1,4 @@
-import { assign, raise, sendTo, setup } from "xstate";
+import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
 import { Recipe } from "../../lang/mod.ts";
 import { lsActor } from "./lsActor.ts";
 import type { AppActor } from "./appMachine.ts";
@@ -8,12 +8,14 @@ import {
   splitPath,
   toggleSelected,
 } from "./helpers.ts";
+import { langActor } from "./langActor.ts";
 
 export type Context = {
   // absolute path
   base_path: string[];
   // could be null if folder is empty
   current_item: string | null;
+  current_is_valid: boolean;
   // absolute paths
   selected_files: string[];
   // could be null if folder is empty
@@ -23,13 +25,24 @@ export type Context = {
   appRef: AppActor;
 };
 
+export type FileIsValidEvent = {
+  type: "FileIsValidEvent";
+  data: boolean;
+};
+
 export type Events =
   | { type: "previous" }
   | { type: "next" }
   | { type: "up" }
   | { type: "in" }
   | { type: "up_reload" }
-  | { type: "toggle" };
+  | { type: "toggle" }
+  | FileIsValidEvent;
+
+export type FileTreeActor = ActorRef<
+  Snapshot<unknown>,
+  Events | FileIsValidEvent
+>;
 
 export const fileTreeMachine = setup({
   types: {
@@ -38,14 +51,14 @@ export const fileTreeMachine = setup({
     input: {} as { cwd: string; appRef: AppActor },
   },
   actors: {
-    // TODO -- another loading state
-    // preview: previewActor,
     ls: lsActor,
+    lang: langActor,
   },
 }).createMachine({
   context: ({ input: { cwd, appRef } }) => ({
     selected_files: [],
     current_item: null,
+    current_is_valid: false,
     base_path: splitPath(cwd ?? "."),
     current_preview: null,
     file_lists: [],
@@ -53,6 +66,13 @@ export const fileTreeMachine = setup({
     appRef,
   }),
   initial: "loading",
+  on: {
+    FileIsValidEvent: {
+      actions: assign(({ event }) => ({
+        current_is_valid: event.data,
+      })),
+    },
+  },
   states: {
     "loading": {
       invoke: {
@@ -86,14 +106,32 @@ export const fileTreeMachine = setup({
                   selected: [],
                 }),
             }),
-            assign(({ context, event }) => loadSelected(context, event.output))
+            assign(({ context, event }) => loadSelected(context, event.output)),
           ],
           target: "ready",
         },
       },
     },
     "ready": {
+      // whenever loading is done, includes on first load
+      entry: sendTo("lang", function ({ context }) {
+        return {
+          type: "CurrentUpdateEvent",
+          data: context.current_item,
+        };
+      }),
       on: {
+        "*": {
+          // I believe this will get triggered twice on first load
+          // because of the entry action
+          // added a deduplicate guard in langActor
+          actions: sendTo("lang", function ({ context }) {
+            return {
+              type: "CurrentUpdateEvent",
+              data: context.current_item,
+            };
+          }),
+        },
         next: {
           actions: assign({
             file_lists: ({ context }) => {
@@ -150,6 +188,7 @@ export const fileTreeMachine = setup({
           ],
         },
         up_reload: [{
+          // TODO remove, since guaranteed to be non empty if a parent?
           guard: ({ context }) => context.file_lists.length === 0,
           target: "loading",
         }, { target: "ready" }],

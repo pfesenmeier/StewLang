@@ -1,9 +1,6 @@
 import { ActorRef, assign, setup, Snapshot } from "xstate";
 import { fileTreeMachine } from "./fileTreeMachine.ts";
 
-// subscribe to file tree... emit events?
-// file tree invokes events on app machine?
-
 // one suggested pattern...
 // sendTo... https://stately.ai/docs/actions#send-parent-action
 // sends events to parent
@@ -12,14 +9,28 @@ import { fileTreeMachine } from "./fileTreeMachine.ts";
 // not sure interop between fromObservable()... createMachine() calls
 // send parent seems best for createMachine() api
 //
+// how to implement update preview updates?
 //
-// so... send events to fileTreeMachine... it sends an event to appMachine that selection was removed or
-// downside: 'selection' stored in two places
-// upside: appMachine will store it in absolute paths, fileTreeMachine will store it in its file_lists[]
+// |-----------------|
+// |    appMachine   |
+// |-----------------|
 //
-// shit... so once leave a directory... how to store the selected file?
-// will have to iterate over selected to see if applies
-// could store inside fileTreeMachine or invoke parent??
+// appMachine subscribes to fileTreeMachine
+// refactor fileTreeMachine to broadcast to all subscribers?
+//
+// |-----------------|             |-----------|
+// | fileTreeMachine |             \ langActor |
+// |-----------------|             \ --------|
+//
+// langActor... subscribes to fileTreeMachine's "CurrentItem" events
+// fileTree...  allow an invalid item to be selected... no
+// so fileTreeMachine invokes langActor to see if valid
+// just call it renderActor?
+//
+// so we've prevented invalid selections making to next sections in the file picker
+// only sent events if .sw (guard)
+//
+// does fileTreeMachine spawn a preview?
 
 export type SelectionUpdateEvent = {
   type: "SelectionUpdateEvent";
