@@ -18,6 +18,7 @@ export function useApp(cwd: string) {
   });
 
   const [langSnapShot] = useMachine(langActor, {
+    systemId: "lang",
     input: {
       fileTreeRef,
     },

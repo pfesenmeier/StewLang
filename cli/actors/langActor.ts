@@ -1,4 +1,4 @@
-import { assign, fromPromise, raise, sendTo, setup } from "xstate";
+import { assign, createActor, fromPromise, raise, sendTo, setup } from "xstate";
 import { Recipe, StewLang } from "../../lang/mod.ts";
 import { FileTreeActor } from "./fileTreeMachine.ts";
 import { ActorInput } from "./helpers.ts";
@@ -36,7 +36,6 @@ export const langActor = setup({
     preview: previewActor,
   },
 }).createMachine({
-  id: "lang",
   context({ input: { fileTreeRef } }) {
     return {
       fileTreeRef,
@@ -51,6 +50,7 @@ export const langActor = setup({
       on: {
         CurrentUpdateEvent: {
           guard: function ({ context, event }) {
+            console.log("CurrentUpdateEvent received")
             // deduplicate events
             return event.data !== context.current;
           },

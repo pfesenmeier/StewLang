@@ -52,8 +52,16 @@ export function getCwd(
 export function loadSelected(
   context: Pick<Context, "file_lists" | "base_path" | "selected_files">,
   names: string[],
-): Pick<Context, "file_lists"> {
-  const cwd = getCwd(context);
+): Partial<Pick<Context, "file_lists">> {
+  let cwd = "";
+
+  // TODO gross
+  try {
+    cwd = getCwd(context);
+  } catch {
+    console.debug("treating folder as empty");
+    return {};
+  }
 
   const indexes: number[] = [];
   for (const [index, file] of names.entries()) {

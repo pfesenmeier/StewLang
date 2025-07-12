@@ -1,4 +1,11 @@
-import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
+import {
+  ActorRef,
+  assign,
+  raise,
+  sendTo,
+  setup,
+  Snapshot,
+} from "xstate";
 import { Recipe } from "../../lang/mod.ts";
 import { lsActor } from "./lsActor.ts";
 import type { AppActor } from "./appMachine.ts";
@@ -107,6 +114,15 @@ export const fileTreeMachine = setup({
                 }),
             }),
             assign(({ context, event }) => loadSelected(context, event.output)),
+            sendTo(
+              ({ system }) => system.get("lang"),
+              function ({ context }) {
+                return {
+                  type: "CurrentUpdateEvent",
+                  data: context.current_item,
+                };
+              },
+            ),
           ],
           target: "ready",
         },
@@ -122,50 +138,65 @@ export const fileTreeMachine = setup({
       //   };
       // }),
       on: {
-        "*": {
-          // I believe this will get triggered twice on first load
-          // because of the entry action
-          // added a deduplicate guard in langActor
-          actions: sendTo("lang", function ({ context }) {
-            return {
-              type: "CurrentUpdateEvent",
-              data: context.current_item,
-            };
-          }),
-        },
         next: {
-          actions: assign({
-            file_lists: ({ context }) => {
-              const result = [...context.file_lists];
-              const last = result.pop();
+          actions: [
+            assign({
+              file_lists: ({ context }) => {
+                const result = [...context.file_lists];
+                const last = result.pop();
 
-              if (!last) return context.file_lists;
-              if (last.current === null) return context.file_lists;
+                if (!last) return context.file_lists;
+                if (last.current === null) return context.file_lists;
 
-              if (last.current < last.items.length - 1) {
-                last.current++;
-              }
+                if (last.current < last.items.length - 1) {
+                  last.current++;
+                }
 
-              return result.concat(last);
-            },
-          }),
+                return result.concat(last);
+              },
+            }),
+            sendTo(
+              (args) => {
+                console.log('getting', args.system.get('lang'))
+                return undefined
+              },
+              function ({ context }) {
+                return {
+                  type: "CurrentUpdateEvent",
+                  data: context.current_item,
+                };
+              },
+            ),
+          ],
         },
         previous: {
-          actions: assign({
-            file_lists: ({ context }) => {
-              const result = [...context.file_lists];
-              const last = result.pop();
+          actions: [
+            assign({
+              file_lists: ({ context }) => {
+                const result = [...context.file_lists];
+                const last = result.pop();
 
-              if (!last) return context.file_lists;
-              if (last.current === null) return context.file_lists;
+                if (!last) return context.file_lists;
+                if (last.current === null) return context.file_lists;
 
-              if (last.current > 0) {
-                last.current--;
-              }
+                if (last.current > 0) {
+                  last.current--;
+                }
 
-              return result.concat(last);
-            },
-          }),
+                return result.concat(last);
+              },
+            }),
+
+            sendTo(
+              ({ system }) => system.get("lang"),
+              function ({ context }) {
+                return {
+                  type: "CurrentUpdateEvent",
+                  data: context.current_item,
+                };
+              },
+            ),
+          ],
         },
         up: {
           actions: [
