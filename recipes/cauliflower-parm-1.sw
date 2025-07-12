@@ -1,3 +1,4 @@
+
 prep (
   1med  cauliflower     ( - cut into 2" florets )
   1/2lb mozarella       ( - tear into pieces )
@@ -7,23 +8,22 @@ prep (
 )
 
 dredge (
-    1/2c AP flour       @flour
+    1/2c AP flour  
     salt and pepper
     3c panko
   - place flour, panko, prep.eggs into separate bowls and season
   - dip prep.cauliflower pieces into flour, prep.eggs, then panko
 )
 
-fry {
+fry (
     1/2c olive oil
-  / large skillet
   - fill large skillet with 1/2" olive oil, heat over medium-high heat
-  - after dredge, fry @prep.cauliflower until golden brown, transfer to paper towel-lined plate
-}
+  - after dredge, fry prep.cauliflower until golden brown, transfer to paper towel-lined plate
+)
 
 assemble (
     5c tomato-sauce
-  / 9x13" @baking-pan
+  - 9x13" baking-pan
   - add thin layer of tomate sauce on bottom of baking pan
   - add third of prep.parm
   - add half of fry.cauliflower
@@ -36,13 +36,14 @@ assemble (
   - add prep.parm
 )
 
-bake {
-  ! 40min baking
+bake (
+  - 40min baking
   - bake until cheese is golden and assemble.sauce is bubbling, baking
-}
+)
 
-serve {
-  fresh @basil leaves
+serve (
+  fresh basil leaves
   - cool 5m
   - top bake with basil
-}
+)
+

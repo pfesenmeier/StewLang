@@ -6,13 +6,16 @@ export default function Preview({ preview }: { preview: LangContext }) {
   return (
     <Box
       borderColor={preview.error ? "red" : "green"}
+      flexDirection="column"
     >
       <Text>
         Preview:
       </Text>
-      <Text>
-        {preview.error?.message}
-      </Text>
+      {preview.error && (
+        <Text color="red">
+          Error: {preview.error?.message}
+        </Text>
+      )}
       <Text>
         {preview.recipe && <Recipe recipe={preview.recipe} />}
       </Text>
