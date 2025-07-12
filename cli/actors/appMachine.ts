@@ -41,13 +41,15 @@ type Events = SelectionUpdateEvent | { type: "next" };
 
 export type AppActor = ActorRef<Snapshot<unknown>, SelectionUpdateEvent>;
 
+export type AppContext = { cwd: string; selected_files: string[] };
+
 export const appMachine = setup({
   actors: {
     fileTree: fileTreeMachine,
   },
   types: {
     input: {} as { cwd: string },
-    context: {} as { cwd: string; selected_files: string[] },
+    context: {} as AppContext,
     events: {} as Events,
   },
 }).createMachine({

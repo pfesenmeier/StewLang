@@ -2,6 +2,7 @@ import { useMachine } from "@xstate/react";
 import { useInput } from "ink";
 import { fileTreeMachine } from "../actors/fileTreeMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
+import { langActor } from "../actors/langActor.ts";
 export function useApp(cwd: string) {
   const [snapshot, _send, appRef] = useMachine(appMachine, {
     input: {
@@ -9,10 +10,16 @@ export function useApp(cwd: string) {
     },
   });
 
-  const [fileTreeSnapshot, send] = useMachine(fileTreeMachine, {
+  const [fileTreeSnapshot, send, fileTreeRef] = useMachine(fileTreeMachine, {
     input: {
       appRef,
       cwd,
+    },
+  });
+
+  const [langSnapShot] = useMachine(langActor, {
+    input: {
+      fileTreeRef,
     },
   });
 
@@ -35,5 +42,6 @@ export function useApp(cwd: string) {
   return {
     fileTree: fileTreeSnapshot.context,
     app: snapshot.context,
+    preview: langSnapShot.context,
   };
 }

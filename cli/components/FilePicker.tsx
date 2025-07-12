@@ -1,9 +1,10 @@
 import { Box, Text } from "ink";
-import { useApp } from "../hooks/useApp.ts";
+import { AppContext } from "../actors/appMachine.ts";
+import { Context } from "../actors/fileTreeMachine.ts";
 
-export default function FilePicker({ rootDir }: { rootDir: string }) {
-  const { fileTree: context, app: appContext } = useApp(rootDir);
-
+export default function FilePicker(
+  { appContext, context }: { appContext: AppContext; context: Context },
+) {
   return (
     <>
       <Box

@@ -1,5 +1,5 @@
 import { render as renderInk } from "ink";
-import FilePicker from "./components/FilePicker.tsx";
+import App from "./components/App.tsx";
 
 export function render(rootDir: string) {
   Deno.addSignalListener("SIGINT", () => {
@@ -10,7 +10,7 @@ export function render(rootDir: string) {
   setTimeout(() => {}, 5000);
 
   renderInk(
-    <FilePicker rootDir={rootDir}></FilePicker>,
+    <App rootDir={rootDir}></App>,
   );
 }
 

@@ -19,21 +19,24 @@ const previewActor = fromPromise(
   ) => preview(filePath),
 );
 
+export type LangContext = {
+  fileTreeRef: FileTreeActor;
+  current: string | string[] | null;
+  recipe: Recipe | null;
+  error: Error | null;
+};
+
 export const langActor = setup({
   types: {
     input: {} as { fileTreeRef: FileTreeActor },
-    context: {} as {
-      fileTreeRef: FileTreeActor;
-      current: string | string[] | null;
-      recipe: Recipe | null;
-      error: Error | null;
-    },
+    context: {} as LangContext,
     events: {} as CurrentUpdateEvent | { type: "decideToPreview" },
   },
   actors: {
     preview: previewActor,
   },
 }).createMachine({
+  id: "lang",
   context({ input: { fileTreeRef } }) {
     return {
       fileTreeRef,
@@ -66,7 +69,6 @@ export const langActor = setup({
             }),
             raise({ type: "decideToPreview" }),
           ],
-          target: "decideToPreview",
         },
         decideToPreview: {
           guard: function ({ context: { current } }) {
