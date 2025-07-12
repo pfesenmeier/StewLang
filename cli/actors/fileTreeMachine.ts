@@ -59,9 +59,16 @@ export const fileTreeMachine = setup({
   },
   actors: {
     ls: lsActor,
-    lang: langActor,
+    lang: langActor
   },
 }).createMachine({
+  invoke: {
+    id: "lang",
+    src: "lang",
+    input: ({ self }) => ({
+      fileTreeRef: self
+    }),
+  },
   context: ({ input: { cwd, appRef } }) => ({
     selected_files: [],
     current_item: null,
@@ -115,7 +122,7 @@ export const fileTreeMachine = setup({
             }),
             assign(({ context, event }) => loadSelected(context, event.output)),
             sendTo(
-              ({ system }) => system.get("lang"),
+              "lang",
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
@@ -155,11 +162,7 @@ export const fileTreeMachine = setup({
                 return result.concat(last);
               },
             }),
-            sendTo(
-              (args) => {
-                console.log('getting', args.system.get('lang'))
-                return undefined
-              },
+            sendTo("lang",
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
@@ -188,7 +191,7 @@ export const fileTreeMachine = setup({
             }),
 
             sendTo(
-              ({ system }) => system.get("lang"),
+              "lang",
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",

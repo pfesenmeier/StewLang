@@ -4,6 +4,7 @@ import { fileTreeMachine } from "../actors/fileTreeMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
 import { langActor } from "../actors/langActor.ts";
 export function useApp(cwd: string) {
+
   const [snapshot, _send, appRef] = useMachine(appMachine, {
     input: {
       cwd,
