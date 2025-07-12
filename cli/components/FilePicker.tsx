@@ -34,7 +34,11 @@ export default function FilePicker({ rootDir }: { rootDir: string }) {
             {file.items.map((name, index) => (
               <Text
                 key={name}
-                color={file.current === index ? "greenBright" : file.selected.includes(index) ? "yellow" : "white"}
+                color={file.current === index
+                  ? "greenBright"
+                  : file.selected.includes(index)
+                  ? "yellow"
+                  : "white"}
               >
                 {name}
               </Text>

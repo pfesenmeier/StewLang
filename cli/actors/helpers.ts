@@ -75,7 +75,7 @@ export function toggleSelected(
 ): Pick<Context, "selected_files" | "file_lists"> {
   const current = getCurrentItem(context);
 
-  if (!current.endsWith(".sw")) return context
+  if (!current.endsWith(".sw")) return context;
 
   if (context.selected_files.includes(current)) {
     const new_files = [...context.file_lists];
