@@ -1,31 +1,29 @@
-import { useMachine } from "@xstate/react";
+import { useMachine, useSelector } from "@xstate/react";
 import { useInput } from "ink";
-import { fileTreeMachine } from "../actors/fileTreeMachine.ts";
+import type { FileTreeMachine } from "../actors/fileTreeMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
 import { langActor } from "../actors/langActor.ts";
-export function useApp(cwd: string) {
+import { ActorRefFrom } from "xstate";
 
+export function useApp(cwd: string) {
   const [snapshot, _send, appRef] = useMachine(appMachine, {
     input: {
       cwd,
     },
   });
 
-  const [fileTreeSnapshot, send, fileTreeRef] = useMachine(fileTreeMachine, {
-    input: {
-      appRef,
-      cwd,
-    },
-  });
+  const fileTreeRef = appRef.system.get("fileTree") as ActorRefFrom<FileTreeMachine>
+  const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context)
 
-  const [langSnapShot] = useMachine(langActor, {
-    systemId: "lang",
-    input: {
-      fileTreeRef,
-    },
-  });
+  const langRef = appRef.system.get("lang") as ActorRefFrom<typeof langActor>
+  const langContext = useSelector(langRef, ({ context }) => context)
+
+  // langRef.subscribe((snapshot) => {
+  //   console.log(snapshot.value)
+  // })
 
   useInput((input, key) => {
+    const send = fileTreeRef.send
     if (input === "q") {
       Deno.exit(0);
     } else if (key.downArrow) {
@@ -42,8 +40,8 @@ export function useApp(cwd: string) {
   });
 
   return {
-    fileTree: fileTreeSnapshot.context,
+    fileTree: fileTreeContext,
     app: snapshot.context,
-    preview: langSnapShot.context,
+    preview: langContext
   };
 }

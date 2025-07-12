@@ -9,8 +9,12 @@ export default function Preview({ preview }: { preview: LangContext }) {
       <Text>
         Preview:
       </Text>
+      <Text>
       {preview.error?.message}
+      </Text>
+      <Text>
       {preview.recipe && JSON.stringify(preview.recipe, null, 2)}
+      </Text>
     </Box>
   );
 }

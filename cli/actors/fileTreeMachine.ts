@@ -14,14 +14,18 @@ import {
   loadSelected,
   splitPath,
   toggleSelected,
+  tryGetCurrentItem,
 } from "./helpers.ts";
 import { langActor } from "./langActor.ts";
+
+export type FileTreeActor = ActorRef<
+  Snapshot<unknown>,
+  Events | FileIsValidEvent
+>;
 
 export type Context = {
   // absolute path
   base_path: string[];
-  // could be null if folder is empty
-  current_item: string | null;
   current_is_valid: boolean;
   // absolute paths
   selected_files: string[];
@@ -46,11 +50,6 @@ export type Events =
   | { type: "toggle" }
   | FileIsValidEvent;
 
-export type FileTreeActor = ActorRef<
-  Snapshot<unknown>,
-  Events | FileIsValidEvent
->;
-
 export const fileTreeMachine = setup({
   types: {
     context: {} as Context,
@@ -64,6 +63,7 @@ export const fileTreeMachine = setup({
 }).createMachine({
   invoke: {
     id: "lang",
+    systemId: "lang",
     src: "lang",
     input: ({ self }) => ({
       fileTreeRef: self
@@ -71,7 +71,6 @@ export const fileTreeMachine = setup({
   },
   context: ({ input: { cwd, appRef } }) => ({
     selected_files: [],
-    current_item: null,
     current_is_valid: false,
     base_path: splitPath(cwd ?? "."),
     current_preview: null,
@@ -126,7 +125,7 @@ export const fileTreeMachine = setup({
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
-                  data: context.current_item,
+                  data: tryGetCurrentItem(context),
                 };
               },
             ),
@@ -137,13 +136,12 @@ export const fileTreeMachine = setup({
     },
     "ready": {
       // whenever loading is done, includes on first load
-      // TODO bug, throws error
-      // entry: sendTo("lang", function ({ context }) {
-      //   return {
-      //     type: "CurrentUpdateEvent",
-      //     data: context.current_item,
-      //   };
-      // }),
+      entry: sendTo("lang", function ({ context }) {
+        return {
+          type: "CurrentUpdateEvent",
+          data: tryGetCurrentItem(context)
+        };
+      }),
       on: {
         next: {
           actions: [
@@ -166,7 +164,7 @@ export const fileTreeMachine = setup({
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
-                  data: context.current_item,
+                  data: tryGetCurrentItem(context)
                 };
               },
             ),
@@ -195,7 +193,7 @@ export const fileTreeMachine = setup({
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
-                  data: context.current_item,
+                  data: tryGetCurrentItem(context)
                 };
               },
             ),
@@ -241,3 +239,5 @@ export const fileTreeMachine = setup({
     },
   },
 });
+
+export type FileTreeMachine = typeof fileTreeMachine

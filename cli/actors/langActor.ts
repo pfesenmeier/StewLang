@@ -49,14 +49,18 @@ export const langActor = setup({
     "ready": {
       on: {
         CurrentUpdateEvent: {
-          guard: function ({ context, event }) {
-            console.log("CurrentUpdateEvent received")
+          guard: function ({ context, event: { data } }) {
             // deduplicate events
-            return event.data !== context.current;
+            return data !== context.current;
           },
           actions: [
-            assign(function ({ event }) {
-              if (event.data === null) {
+            assign(function ({ event: { data } }) {
+              console.log("CurrentUpdateEvent received");
+              console.log("current", data);
+              if (
+                data === null ||
+                (typeof data === "string" && !data.endsWith(".sw"))
+              ) {
                 return {
                   current: null,
                   preview: undefined,
@@ -64,7 +68,7 @@ export const langActor = setup({
               }
 
               return {
-                current: event.data,
+                current: data,
               };
             }),
             raise({ type: "decideToPreview" }),
@@ -94,8 +98,17 @@ export const langActor = setup({
                 error: null,
               };
             }),
+            sendTo(
+              ({ context }) => context.fileTreeRef,
+              function ({ context }) {
+                return {
+                  type: "FileIsValidEvent",
+                  data: !context.error,
+                };
+              },
+            ),
           ],
-          target: "respond",
+          target: "ready",
         },
         onError: {
           actions: [
@@ -105,24 +118,31 @@ export const langActor = setup({
                 recipe: null,
               };
             }),
+            sendTo(
+              ({ context }) => context.fileTreeRef,
+              function ({ context }) {
+                return {
+                  type: "FileIsValidEvent",
+                  data: !context.error,
+                };
+              },
+            ),
           ],
-          target: "respond",
+          target: "ready",
         },
       },
     },
     "respond": {
-      always: {
-        actions: [
-          sendTo(function ({ context }) {
-            return context.fileTreeRef;
-          }, function ({ context }) {
-            return {
-              type: "FileIsValidEvent",
-              data: !context.error,
-            };
-          }),
-        ],
-      },
+      entry: sendTo(
+        ({ context }) => context.fileTreeRef,
+        function ({ context }) {
+          return {
+            type: "FileIsValidEvent",
+            data: !context.error,
+          };
+        },
+      ),
+      target: "ready",
     },
   },
 });

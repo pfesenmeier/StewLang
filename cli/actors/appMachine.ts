@@ -53,6 +53,11 @@ export const appMachine = setup({
     events: {} as Events,
   },
 }).createMachine({
+  invoke: {
+    src: "fileTree",
+    systemId: "fileTree",
+    input: ({ self, context: { cwd } }) => ({ appRef: self, cwd }),
+  },
   context: ({ input }) => ({ cwd: input.cwd, selected_files: [] }),
   initial: "select_recipe",
   states: {

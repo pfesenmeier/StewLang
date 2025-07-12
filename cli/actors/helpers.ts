@@ -40,6 +40,16 @@ export function getCurrentItem(
   return joinPath([...context.base_path, ...shownPath]);
 }
 
+export function tryGetCurrentItem(
+  context: Pick<Context, "file_lists" | "base_path">,
+) {
+  try {
+    return getCurrentItem(context)
+  } catch {
+    return null
+  }
+}
+
 export function getCwd(
   context: Pick<Context, "file_lists" | "base_path">,
 ) {
