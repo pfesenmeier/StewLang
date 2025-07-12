@@ -1,5 +1,6 @@
 import { Box, Text } from "ink";
 import { LangContext } from "../actors/langActor.ts";
+import Recipe from "./Recipe.tsx";
 
 export default function Preview({ preview }: { preview: LangContext }) {
   return (
@@ -10,10 +11,13 @@ export default function Preview({ preview }: { preview: LangContext }) {
         Preview:
       </Text>
       <Text>
-      {preview.error?.message}
+        {preview.error?.message}
       </Text>
       <Text>
-      {preview.recipe && JSON.stringify(preview.recipe, null, 2)}
+        {preview.recipe && <Recipe recipe={preview.recipe} />}
+      </Text>
+      <Text>
+        {preview.error && preview.fileContents}
       </Text>
     </Box>
   );

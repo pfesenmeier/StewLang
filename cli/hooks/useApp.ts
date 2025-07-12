@@ -12,18 +12,20 @@ export function useApp(cwd: string) {
     },
   });
 
-  const fileTreeRef = appRef.system.get("fileTree") as ActorRefFrom<FileTreeMachine>
-  const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context)
+  const fileTreeRef = appRef.system.get("fileTree") as ActorRefFrom<
+    FileTreeMachine
+  >;
+  const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context);
 
-  const langRef = appRef.system.get("lang") as ActorRefFrom<typeof langActor>
-  const langContext = useSelector(langRef, ({ context }) => context)
+  const langRef = appRef.system.get("lang") as ActorRefFrom<typeof langActor>;
+  const langContext = useSelector(langRef, ({ context }) => context);
 
   // langRef.subscribe((snapshot) => {
   //   console.log(snapshot.value)
   // })
 
   useInput((input, key) => {
-    const send = fileTreeRef.send
+    const send = fileTreeRef.send;
     if (input === "q") {
       Deno.exit(0);
     } else if (key.downArrow) {
@@ -42,6 +44,6 @@ export function useApp(cwd: string) {
   return {
     fileTree: fileTreeContext,
     app: snapshot.context,
-    preview: langContext
+    preview: langContext,
   };
 }

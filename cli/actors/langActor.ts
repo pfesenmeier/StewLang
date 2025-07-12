@@ -1,4 +1,4 @@
-import { assign, createActor, fromPromise, raise, sendTo, setup } from "xstate";
+import { assign, fromPromise, raise, sendTo, setup } from "xstate";
 import { Recipe, StewLang } from "../../lang/mod.ts";
 import { FileTreeActor } from "./fileTreeMachine.ts";
 import { ActorInput } from "./helpers.ts";
@@ -13,15 +13,23 @@ export type CurrentUpdateEvent = {
   data: string | string[] | null;
 };
 
-const previewActor = fromPromise(
-  (
-    { input: { filePath } }: ActorInput<{ filePath: string | string[] | null }>,
-  ) => preview(filePath),
-);
+const readFilesActor = fromPromise((
+  { input: { filePaths } }: ActorInput<{ filePaths: string[] }>,
+) => Promise.all(filePaths.map((file) => Deno.readTextFile(file))));
+
+// TODO what to do about the headers on each file...
+function interpret(fileContents: string[]) {
+  const file = fileContents.join("\n");
+  if (!file) return null;
+  const lang = new StewLang();
+
+  return lang.read(file);
+}
 
 export type LangContext = {
   fileTreeRef: FileTreeActor;
-  current: string | string[] | null;
+  fileContents: string[] | null;
+  current: string[] | null;
   recipe: Recipe | null;
   error: Error | null;
 };
@@ -33,12 +41,13 @@ export const langActor = setup({
     events: {} as CurrentUpdateEvent | { type: "decideToPreview" },
   },
   actors: {
-    preview: previewActor,
+    read: readFilesActor,
   },
 }).createMachine({
   context({ input: { fileTreeRef } }) {
     return {
       fileTreeRef,
+      fileContents: null,
       current: null,
       recipe: null,
       error: null,
@@ -55,8 +64,6 @@ export const langActor = setup({
           },
           actions: [
             assign(function ({ event: { data } }) {
-              console.log("CurrentUpdateEvent received");
-              console.log("current", data);
               if (
                 data === null ||
                 (typeof data === "string" && !data.endsWith(".sw"))
@@ -68,7 +75,7 @@ export const langActor = setup({
               }
 
               return {
-                current: data,
+                current: typeof data === "string" ? [data] : data,
               };
             }),
             raise({ type: "decideToPreview" }),
@@ -84,39 +91,31 @@ export const langActor = setup({
     },
     "previewing": {
       invoke: {
-        src: "preview",
+        src: "read",
         input({ context: { current } }) {
           return {
-            filePath: current,
+            filePaths: current ?? [],
           };
         },
         onDone: {
           actions: [
             assign(function ({ event }) {
               return {
-                recipe: event.output,
-                error: null,
+                fileContents: event.output,
               };
             }),
-            sendTo(
-              ({ context }) => context.fileTreeRef,
-              function ({ context }) {
+            assign(({ context }) => {
+              try {
                 return {
-                  type: "FileIsValidEvent",
-                  data: !context.error,
+                  recipe: interpret(context.fileContents ?? []),
+                  error: null,
                 };
-              },
-            ),
-          ],
-          target: "ready",
-        },
-        onError: {
-          actions: [
-            assign(function ({ event }) {
-              return {
-                error: event.error as Error,
-                recipe: null,
-              };
+              } catch (error) {
+                return {
+                  recipe: null,
+                  error: error as Error,
+                };
+              }
             }),
             sendTo(
               ({ context }) => context.fileTreeRef,
@@ -146,20 +145,3 @@ export const langActor = setup({
     },
   },
 });
-
-async function preview(filePath: string | string[] | null) {
-  if (!filePath) return;
-
-  const lang = new StewLang();
-  let file = "";
-
-  if (typeof filePath === "string") {
-    file = await Deno.readTextFile(filePath);
-  } else {
-    for (const path of filePath) {
-      file += await Deno.readTextFile(path);
-    }
-  }
-
-  return lang.read(file);
-}

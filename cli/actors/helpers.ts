@@ -44,9 +44,9 @@ export function tryGetCurrentItem(
   context: Pick<Context, "file_lists" | "base_path">,
 ) {
   try {
-    return getCurrentItem(context)
+    return getCurrentItem(context);
   } catch {
-    return null
+    return null;
   }
 }
 

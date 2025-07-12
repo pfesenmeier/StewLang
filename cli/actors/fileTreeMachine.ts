@@ -1,11 +1,4 @@
-import {
-  ActorRef,
-  assign,
-  raise,
-  sendTo,
-  setup,
-  Snapshot,
-} from "xstate";
+import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
 import { Recipe } from "../../lang/mod.ts";
 import { lsActor } from "./lsActor.ts";
 import type { AppActor } from "./appMachine.ts";
@@ -58,7 +51,7 @@ export const fileTreeMachine = setup({
   },
   actors: {
     ls: lsActor,
-    lang: langActor
+    lang: langActor,
   },
 }).createMachine({
   invoke: {
@@ -66,7 +59,7 @@ export const fileTreeMachine = setup({
     systemId: "lang",
     src: "lang",
     input: ({ self }) => ({
-      fileTreeRef: self
+      fileTreeRef: self,
     }),
   },
   context: ({ input: { cwd, appRef } }) => ({
@@ -139,7 +132,7 @@ export const fileTreeMachine = setup({
       entry: sendTo("lang", function ({ context }) {
         return {
           type: "CurrentUpdateEvent",
-          data: tryGetCurrentItem(context)
+          data: tryGetCurrentItem(context),
         };
       }),
       on: {
@@ -160,14 +153,12 @@ export const fileTreeMachine = setup({
                 return result.concat(last);
               },
             }),
-            sendTo("lang",
-              function ({ context }) {
-                return {
-                  type: "CurrentUpdateEvent",
-                  data: tryGetCurrentItem(context)
-                };
-              },
-            ),
+            sendTo("lang", function ({ context }) {
+              return {
+                type: "CurrentUpdateEvent",
+                data: tryGetCurrentItem(context),
+              };
+            }),
           ],
         },
         previous: {
@@ -193,7 +184,7 @@ export const fileTreeMachine = setup({
               function ({ context }) {
                 return {
                   type: "CurrentUpdateEvent",
-                  data: tryGetCurrentItem(context)
+                  data: tryGetCurrentItem(context),
                 };
               },
             ),
@@ -225,7 +216,11 @@ export const fileTreeMachine = setup({
           guard: ({ context }) => context.file_lists.length === 0,
           target: "loading",
         }, { target: "ready" }],
-        in: "loading",
+        in: [{
+          guard: ({ context }) =>
+            tryGetCurrentItem(context)?.endsWith("/") ?? false,
+          target: "loading",
+        }, { target: "ready" }],
         toggle: {
           actions: [
             assign(({ context }) => toggleSelected(context)),
@@ -240,4 +235,4 @@ export const fileTreeMachine = setup({
   },
 });
 
-export type FileTreeMachine = typeof fileTreeMachine
+export type FileTreeMachine = typeof fileTreeMachine;
