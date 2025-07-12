@@ -114,12 +114,13 @@ export const fileTreeMachine = setup({
     },
     "ready": {
       // whenever loading is done, includes on first load
-      entry: sendTo("lang", function ({ context }) {
-        return {
-          type: "CurrentUpdateEvent",
-          data: context.current_item,
-        };
-      }),
+      // TODO bug, throws error
+      // entry: sendTo("lang", function ({ context }) {
+      //   return {
+      //     type: "CurrentUpdateEvent",
+      //     data: context.current_item,
+      //   };
+      // }),
       on: {
         "*": {
           // I believe this will get triggered twice on first load

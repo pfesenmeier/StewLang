@@ -7,13 +7,13 @@
     "jsr:@std/fs@^1.0.18": "1.0.18",
     "jsr:@std/internal@^1.0.6": "1.0.8",
     "jsr:@std/path@^1.1.0": "1.1.0",
-    "npm:@types/ink@^2.0.3": "2.0.3_@types+react@19.1.7_react@19.1.0",
-    "npm:@types/react@^19.1.7": "19.1.7",
-    "npm:@xstate/react@^5.0.5": "5.0.5_react@19.1.0_xstate@5.19.4",
-    "npm:ink@6": "6.0.0_@types+react@19.1.7_react@19.1.0",
+    "npm:@types/ink@^2.0.3": "2.0.3_@types+react@19.1.8_react@19.1.0",
+    "npm:@types/node@*": "22.15.15",
+    "npm:@types/react@^19.1.7": "19.1.8",
+    "npm:@xstate/react@6": "6.0.0_react@19.1.0_xstate@5.20.1",
+    "npm:ink@6": "6.0.1_@types+react@19.1.8_react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
-    "npm:xstate@*": "5.19.4",
-    "npm:xstate@^5.19.4": "5.19.4"
+    "npm:xstate@^5.20.1": "5.20.1"
   },
   "jsr": {
     "@std/assert@1.0.13": {
@@ -46,21 +46,27 @@
         "is-fullwidth-code-point@4.0.0"
       ]
     },
-    "@types/ink@2.0.3_@types+react@19.1.7_react@19.1.0": {
+    "@types/ink@2.0.3_@types+react@19.1.8_react@19.1.0": {
       "integrity": "sha512-DYKIKEJqhsGfQ/jgX0t9BzfHmBJ/9dBBT2MDsHAQRAfOPhEe7LZm5QeNBx1J34/e108StCPuJ3r4bh1y38kCJA==",
       "dependencies": [
         "ink"
       ],
       "deprecated": true
     },
-    "@types/react@19.1.7": {
-      "integrity": "sha512-BnsPLV43ddr05N71gaGzyZ5hzkCmGwhMvYc8zmvI8Ci1bRkkDSzDDVfAXfN2tk748OwI7ediiPX6PfT9p0QGVg==",
+    "@types/node@22.15.15": {
+      "integrity": "sha512-R5muMcZob3/Jjchn5LcO8jdKwSCbzqmPB6ruBxMcf9kbxtniZHP327s6C37iOfuw8mbKK3cAQa7sEl7afLrQ8A==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "@types/react@19.1.8": {
+      "integrity": "sha512-AwAfQ2Wa5bCx9WP8nZL2uMZWod7J7/JSplxbTmBQ5ms6QpqNYm672H0Vu9ZVKVngQ+ii4R/byguVEUZQyeg44g==",
       "dependencies": [
         "csstype"
       ]
     },
-    "@xstate/react@5.0.5_react@19.1.0_xstate@5.19.4": {
-      "integrity": "sha512-MfF/cPHa3lNKJmGFpUycMbNP25qBXyZXrxc8VYNroAu0Nnk0DV5WzAkTcQXma0xEC4dSwsoA+YQuKbZATtqvgg==",
+    "@xstate/react@6.0.0_react@19.1.0_xstate@5.20.1": {
+      "integrity": "sha512-xXlLpFJxqLhhmecAXclBECgk+B4zYSrDTl8hTfPZBogkn82OHKbm9zJxox3Z/YXoOhAQhKFTRLMYGdlbhc6T9A==",
       "dependencies": [
         "react",
         "use-isomorphic-layout-effect",
@@ -135,8 +141,8 @@
     "indent-string@5.0.0": {
       "integrity": "sha512-m6FAo/spmsW2Ab2fU35JTYwtOKa2yAwXSwgjSv1TJzh4Mh7mC3lzAOVLBprb72XsTrgkEIsl7YrFNAiDiRhIGg=="
     },
-    "ink@6.0.0_@types+react@19.1.7_react@19.1.0": {
-      "integrity": "sha512-pPq3TidljXrDXJxVAOtTCw54lwNfiITOR9PVpXj92MSVEAX+k+/h9QYZtV712be9a3/8U5n/TphSMHY8rAmcDA==",
+    "ink@6.0.1_@types+react@19.1.8_react@19.1.0": {
+      "integrity": "sha512-vhhFrCodTHZAPPSdMYzLEbeI0Ug37R9j6yA0kLKok9kSK53lQtj/RJhEQJUjq6OwT4N33nxqSRd/7yXhEhVPIw==",
       "dependencies": [
         "@alcalzone/ansi-tokenize",
         "@types/react",
@@ -270,6 +276,9 @@
     "type-fest@4.41.0": {
       "integrity": "sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA=="
     },
+    "undici-types@6.21.0": {
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
+    },
     "use-isomorphic-layout-effect@1.2.1_react@19.1.0": {
       "integrity": "sha512-tpZZ+EX0gaghDAiFR37hj5MgY6ZN55kLiPkJsKxBMZ6GZdOSPJXiOzPM984oPYZ5AnehYx5WQp1+ME8I/P/pRA==",
       "dependencies": [
@@ -299,8 +308,8 @@
     "ws@8.18.2": {
       "integrity": "sha512-DMricUmwGZUVr++AEAe2uiVM7UoO9MAVZMDu05UQOaUII0lp+zOzLLU4Xqh/JvTqklB1T4uELaaPBKyjE1r4fQ=="
     },
-    "xstate@5.19.4": {
-      "integrity": "sha512-h1UMSYOB564NXqAI+VpXrxwaBdOJUh6LOStooQ+Rn/+gqJWtGBfjZn265BwFI8Mp4ZoOyoLDNf8X1yp3faBUZQ=="
+    "xstate@5.20.1": {
+      "integrity": "sha512-i9ZpNnm/XhCOMUxae1suT8PjYNTStZWbhmuKt4xeTPaYG5TS0Fz0i+Ka5yxoNPpaHW3VW6JIowrwFgSTZONxig=="
     },
     "yoga-layout@3.2.1": {
       "integrity": "sha512-0LPOt3AxKqMdFBZA3HBAt/t/8vIKq7VaQYbuA8WxCgung+p9TVyKRYdpvCb80HcdTN2NkbIKbhNwKUfm3tQywQ=="
@@ -316,10 +325,10 @@
           "jsr:@std/path@^1.1.0",
           "npm:@types/ink@^2.0.3",
           "npm:@types/react@^19.1.7",
-          "npm:@xstate/react@^5.0.5",
+          "npm:@xstate/react@6",
           "npm:ink@6",
           "npm:react@^19.1.0",
-          "npm:xstate@^5.19.4"
+          "npm:xstate@^5.20.1"
         ]
       },
       "lang": {

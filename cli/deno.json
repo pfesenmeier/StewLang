@@ -9,10 +9,10 @@
     "@std/path": "jsr:@std/path@^1.1.0",
     "@types/ink": "npm:@types/ink@^2.0.3",
     "@types/react": "npm:@types/react@^19.1.7",
-    "@xstate/react": "npm:@xstate/react@^5.0.5",
+    "@xstate/react": "npm:@xstate/react@^6.0.0",
     "ink": "npm:ink@^6.0.0",
     "react": "npm:react@^19.1.0",
-    "xstate": "npm:xstate@^5.19.4"
+    "xstate": "npm:xstate@^5.20.1"
   },
   "compilerOptions": {
     "types": [

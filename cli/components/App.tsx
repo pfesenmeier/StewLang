@@ -1,18 +1,16 @@
 import { Box } from "ink";
 import FilePicker from "./FilePicker.tsx";
 import { useApp } from "../hooks/useApp.ts";
+import Selected from "./Selected.tsx";
+import Preview from "./Preview.tsx";
 
 export default function App({ rootDir }: { rootDir: string }) {
   const { fileTree: context, app: appContext, preview } = useApp(rootDir);
   return (
-    <Box>
-      <FilePicker context={context} appContext={appContext} />
-      <Box
-        borderColor={preview.error ? "red" : "green"}
-      >
-        {preview.error?.message}
-        {preview.recipe && JSON.stringify(preview.recipe, null, 2)}
-      </Box>
+    <Box flexDirection="column">
+      <Selected appContext={appContext} />
+      <FilePicker context={context} />
+      <Preview preview={preview} />
     </Box>
   );
 }

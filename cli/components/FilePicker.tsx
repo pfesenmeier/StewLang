@@ -1,28 +1,11 @@
 import { Box, Text } from "ink";
-import { AppContext } from "../actors/appMachine.ts";
 import { Context } from "../actors/fileTreeMachine.ts";
 
 export default function FilePicker(
-  { appContext, context }: { appContext: AppContext; context: Context },
+  { context }: { context: Context },
 ) {
   return (
     <>
-      <Box
-        flexDirection="column"
-        borderStyle="round"
-        borderColor="cyan"
-        padding={1}
-      >
-        <Text>
-          Selected:
-        </Text>
-
-        {appContext.selected_files.length > 0
-          ? context.selected_files.map((name, index) => (
-            <Text key={index} color="blueBright">{name}</Text>
-          ))
-          : <Text color="red">No files selected</Text>}
-      </Box>
       <Box>
         {context.file_lists.map((file, index) => (
           <Box
