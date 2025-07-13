@@ -1,5 +1,5 @@
 import { Parser } from "../parser/parser.ts";
-import { Recipe } from "../parser/recipe.ts";
+import type { Recipe } from "../parser/recipe.ts";
 import { Resolver } from "../resolver/resolver.ts";
 import { Scanner } from "../scanner/scanner.ts";
 
@@ -13,4 +13,4 @@ export class StewLang {
   }
 }
 
-export { Recipe };
+export type { Recipe };

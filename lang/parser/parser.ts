@@ -7,7 +7,7 @@ import type { Step, StepWord } from "./step.ts";
 export class Parser {
   private index = 0;
   private ingredients: Ingredient[] = [];
-  private meta: Record<string, string> = {};
+  private meta: Record<string, string> | null = null;
 
   constructor(private tokens: Token[]) {}
 
@@ -15,7 +15,7 @@ export class Parser {
     this.recipe();
     return {
       ingredients: this.ingredients,
-      meta: this.meta,
+      ...(this.meta && { meta: this.meta }),
     };
   }
 
@@ -27,6 +27,11 @@ export class Parser {
         values.push(this.getPrevious().value);
       }
       this.match([TokenType.NEWLINE]);
+
+      if (this.meta === null) {
+        this.meta = {};
+      }
+
       this.meta[key] = values.join(" ");
     }
     while (!this.isAtEnd()) {
@@ -40,7 +45,7 @@ export class Parser {
   private ingredient(parent?: Ingredient): Ingredient {
     const name: string[] = [];
     let amtNum: number | undefined;
-    let amount: Amount | undefined = undefined;
+    let amount: Amount | null = null;
 
     if (this.match([TokenType.NUMBER])) {
       const amtString = this.getPrevious().value;
@@ -50,12 +55,12 @@ export class Parser {
     }
 
     if (this.getCurrent().value === TokenType.WORD) {
-      const unit = parseAmountNumber(this.getCurrent().value)
-      if (typeof unit !== 'number') {
+      const unit = parseAmountNumber(this.getCurrent().value);
+      if (typeof unit !== "number") {
         amount = {
           amount: amtNum ?? 1,
-          unit
-        }
+          unit,
+        };
         this.advance();
       }
     }
@@ -74,41 +79,54 @@ export class Parser {
       if (this.match([TokenType.RIGHT_PARENS])) {
         return {
           name,
-          amount,
-          parent,
+          ...(amount && { amount }),
+          ...(parent && { parent }),
         };
       }
 
-      const ingredient: Ingredient = { name, amount, parent };
-      const { steps, ingredients} = this.detail(ingredient);
-      ingredient.steps = steps;
-      ingredient.ingredients = ingredients;
+      const ingredient: Ingredient = {
+        name,
+        ...(amount && { amount }),
+        ...(parent && { parent }),
+      };
+      const { steps, ingredients } = this.detail(ingredient);
+
+      if (steps && steps.length > 0) {
+        ingredient.steps = steps;
+      }
+
+      if (ingredients && ingredients.length > 0) {
+        ingredient.ingredients = ingredients;
+      }
 
       return ingredient;
     }
 
     this.consumeNewline();
 
-    return { name, amount, parent };
+    return { name, ...(amount && { amount }), ...(parent && { parent }) };
   }
 
-  private detail(parent?: Ingredient): { steps: Step[]; ingredients: Ingredient[] } {
-    const detail = {
-      ingredients: [] as Ingredient[],
-      steps: [] as Step[],
-    }
+  private detail(
+    parent?: Ingredient,
+  ): { steps: Step[]; ingredients: Ingredient[] } {
+    const ingredients: Ingredient[] = [];
+    const steps: Step[] = [];
     while (!this.match([TokenType.RIGHT_PARENS])) {
       if (this.match([TokenType.DASH])) {
         const step: Step = this.step();
-        detail.steps.push(step);
+        steps.push(step);
       } else {
         const ingredient = this.ingredient(parent);
-        detail.ingredients.push(ingredient);
+        ingredients.push(ingredient);
       }
       this.consumeNewline();
     }
 
-    return detail;
+    return {
+      steps,
+      ingredients,
+    };
   }
 
   step(): Step {

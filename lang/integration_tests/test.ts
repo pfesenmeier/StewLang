@@ -1,19 +1,30 @@
 import { assertEquals } from "jsr:@std/assert";
-import { Recipe, StewLang } from "../mod.ts";
-import { Ingredient } from "../parser/ingredient.ts";
+import { StewLang } from "../mod.ts";
+import type { Recipe } from "../parser/recipe.ts";
 
 const lang = new StewLang();
 
 Deno.test("sample", () => {
-  assertEquals(lang.read("sample"), new Recipe([new Ingredient(["sample"])]));
+  const expected: Recipe = {
+    ingredients: [{  name: ["sample"],}],
+    meta: {},
+  }
+  assertEquals(lang.read("sample"), expected);
 });
 
 Deno.test("recipe multiline", () => {
   const sut = `foo 
 bar
 `;
+
+  const expected: Recipe = {
+      ingredients: [{  name: ["foo"],  }, {
+        name: ["bar"],
+      }],
+      meta: {},
+  }
   assertEquals(
     lang.read(sut),
-    new Recipe([new Ingredient(["foo"]), new Ingredient(["bar"])]),
+    expected,
   );
 });
