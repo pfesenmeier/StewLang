@@ -1,7 +1,8 @@
-import { assign, fromPromise, raise, sendTo, setup } from "xstate";
-import { Recipe, StewLang } from "../../lang/mod.ts";
-import type { FileTreeRef } from "./fileTree/fileTreeMachine.ts";
-import { ActorInput } from "./helpers.ts";
+import { assign, raise, sendTo, setup } from "xstate";
+import { Recipe, StewLang } from "../../../lang/mod.ts";
+import type { FileTreeRef } from "../fileTree/fileTreeMachine.ts";
+import { readFilesActorLogic } from "./readFileActorLogic.ts";
+import { setCurrent } from "./helpers.ts";
 
 export type PreviewEvent = {
   type: "PreviewEvent";
@@ -12,10 +13,6 @@ export type CurrentUpdateEvent = {
   type: "CurrentUpdateEvent";
   data: string | string[] | null;
 };
-
-const readFilesActor = fromPromise((
-  { input: { filePaths } }: ActorInput<{ filePaths: string[] }>,
-) => Promise.all(filePaths.map((file) => Deno.readTextFile(file))));
 
 // TODO what to do about the headers on each file...
 function interpret(fileContents: string[]) {
@@ -41,7 +38,7 @@ export const langMachine = setup({
     events: {} as CurrentUpdateEvent | { type: "decideToPreview" },
   },
   actors: {
-    read: readFilesActor,
+    read: readFilesActorLogic,
   },
 }).createMachine({
   context({ input: { fileTreeRef } }) {
@@ -63,21 +60,7 @@ export const langMachine = setup({
             return data !== context.current;
           },
           actions: [
-            assign(function ({ event: { data } }) {
-              if (
-                data === null ||
-                (typeof data === "string" && !data.endsWith(".sw"))
-              ) {
-                return {
-                  current: null,
-                  preview: undefined,
-                };
-              }
-
-              return {
-                current: typeof data === "string" ? [data] : data,
-              };
-            }),
+            assign(setCurrent),
             raise({ type: "decideToPreview" }),
           ],
         },

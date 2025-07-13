@@ -2,9 +2,10 @@ import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
 import { Recipe } from "../../../lang/mod.ts";
 import { lsActorLogic } from "../lsActorLogic.ts";
 import type { AppActorRef } from "../appMachine.ts";
+import { langMachine } from "../lang/langMachine.ts";
 import {
+  getCurrentItem,
   goUpDirectory,
-  joinPath,
   loadFiles,
   loadSelected,
   scroll,
@@ -12,7 +13,6 @@ import {
   toggleSelected,
   tryGetCurrentItem,
 } from "./helpers.ts";
-import { langMachine } from "../langMachine.ts";
 
 export type FileTreeRef = ActorRef<
   Snapshot<unknown>,
@@ -87,23 +87,9 @@ export const fileTreeMachine = setup({
       invoke: {
         src: "ls",
         input: ({ context }) => {
-          if (context.file_lists.length === 0) {
-            return { folder: joinPath(context.base_path) };
-          }
-
-          // TODO guard
-          const selected = context.file_lists.map(({ items, current }) => {
-            if (current === null) {
-              throw new Error("tried to go in when enter is null");
-            }
-            const result = items.at(current);
-
-            if (!result) throw new Error("current not set correctly");
-
-            return result;
-          });
-
-          return { folder: joinPath([...context.base_path, ...selected]) };
+          return {
+            folder: getCurrentItem(context),
+          };
         },
         onDone: {
           actions: [
@@ -111,7 +97,7 @@ export const fileTreeMachine = setup({
             assign(({ context, event }) => loadSelected(context, event.output)),
             sendTo(
               "lang",
-              function ({ context }) {
+              ({ context }) => {
                 return {
                   type: "CurrentUpdateEvent",
                   data: tryGetCurrentItem(context),
@@ -125,7 +111,7 @@ export const fileTreeMachine = setup({
     },
     "ready": {
       // whenever loading is done, includes on first load
-      entry: sendTo("lang", function ({ context }) {
+      entry: sendTo("lang", ({ context }) => {
         return {
           type: "CurrentUpdateEvent",
           data: tryGetCurrentItem(context),
@@ -136,7 +122,7 @@ export const fileTreeMachine = setup({
           actions: [
             assign(({ context }) => scroll(context, "next")),
             // TODO do not send if current not changed
-            sendTo("lang", function ({ context }) {
+            sendTo("lang", ({ context }) => {
               return {
                 type: "CurrentUpdateEvent",
                 data: tryGetCurrentItem(context),
@@ -150,7 +136,7 @@ export const fileTreeMachine = setup({
             // TODO do not send if current not changed
             sendTo(
               "lang",
-              function ({ context }) {
+              ({ context }) => {
                 return {
                   type: "CurrentUpdateEvent",
                   data: tryGetCurrentItem(context),
