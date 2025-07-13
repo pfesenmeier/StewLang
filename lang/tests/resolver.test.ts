@@ -10,199 +10,208 @@
 // maybe shove it into Environment class
 
 import { assertEquals } from "jsr:@std/assert/equals";
-import { Identifier } from "../parser/identifier.ts";
-import { Ingredient } from "../parser/ingredient.ts";
-import { Recipe } from "../parser/recipe.ts";
-import { Step } from "../parser/step.ts";
+import type { Identifier } from "../parser/identifier.ts";
+import type { Ingredient } from "../parser/ingredient.ts";
 import { Resolver } from "../resolver/resolver.ts";
 
 // in react app, could generate a link to id of the ingredient
 Deno.test("it resolves sibling references at top level", () => {
-  const input = new Recipe([
-    new Ingredient(["a"]),
-    new Ingredient(["b"], {
-      detail: [
-        new Step(["mix", new Identifier("@a"), "thoroughly"]),
-      ],
-    }),
-  ]);
+  const aIngredient: Ingredient = { name: ["a"] };
+  const input = {
+    ingredients: [
+      aIngredient,
+      { 
+        name: ["b"], 
+        steps: [
+          { text: ["mix", { name: "@a" }] },
+        ],
+      },
+      { 
+        name: ["b"], 
+        steps: [
+          { text: ["mix", { name: "@a" }, "thoroughly"] },
+        ],
+      },
+    ],
+  };
 
   new Resolver(input).resolve();
 
-  const step = input.ingredients.at(1)!.detail!.at(0)! as Step;
+  const step = input.ingredients.at(1)!.steps!.at(0)!;
   const identifier = step.text.at(1) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "a",
-  );
-});
-
-Deno.test("it concats names with '-'", () => {
-  const input = new Recipe([
-    new Ingredient(["a", "b"]),
-    new Ingredient(["b"], {
-      detail: [
-        new Step(["mix", new Identifier("@a-b"), "thoroughly"]),
-      ],
-    }),
-  ]);
-
-  new Resolver(input).resolve();
-
-  const step = input.ingredients.at(1)!.detail!.at(0)! as Step;
-  const identifier = step.text.at(1) as Identifier;
-
-  assertEquals(
-    identifier.ingredientId,
-    "a-b",
+    identifier.ingredient,
+    aIngredient
   );
 });
 
 Deno.test("it resolves sibling references inside ingredient", () => {
-  const parent = new Ingredient(["a"], {
-    detail: [
-      new Step(["mix", new Identifier("@b")]),
+  const siblingIngredient: Ingredient = { name: ["b"] };
+  const parent: Ingredient = {
+    name: ["a"],
+    steps: [
+      { text: ["mix", { name: "@b" }] },
     ],
-  });
-  parent.detail?.push(new Ingredient(["b"], { parent }));
-  const input = new Recipe([parent]);
+    ingredients: [siblingIngredient],
+  };
+  siblingIngredient.parent = parent;
+  const input = { ingredients: [parent] };
 
   new Resolver(input).resolve();
 
-  const step = input.ingredients.at(0)!.detail!.at(0)! as Step;
+  const step = input.ingredients.at(0)!.steps!.at(0)!;
   const identifier = step.text.at(1) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "a:b",
+    identifier.ingredient,
+    siblingIngredient
   );
 });
 
 Deno.test("it resolves sibling references inside ingredient with multiple words", () => {
-  const parent = new Ingredient(["a"], {
-    detail: [
-      new Step(["mix", new Identifier("@b-c")]),
+  const childIngredient: Ingredient = { name: ["b", "c"] };
+  const parent: Ingredient = {
+    name: ["a"],
+    steps: [
+      { text: ["mix", { name: "@b-c" }] },
     ],
-  });
-  parent.detail?.push(new Ingredient(["b", "c"], { parent }));
-  const input = new Recipe([parent]);
+    ingredients: [childIngredient],
+  };
+  childIngredient.parent = parent;
+  const input = { ingredients: [parent] };
 
   new Resolver(input).resolve();
 
-  const step = input.ingredients.at(0)!.detail!.at(0)! as Step;
+  const step = input.ingredients.at(0)!.steps!.at(0)!;
   const identifier = step.text.at(1) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "a:b-c",
+    identifier.ingredient,
+    childIngredient
   );
 });
 
 Deno.test("it resolves sibling references inside ingredient", () => {
-  const input = new Recipe([
-    new Ingredient(["a"], {
-      detail: [
-        new Ingredient(["b"], { id: "a:b" }),
-        new Ingredient(["c"], {
-          id: "a:c",
-          detail: [
-            new Step([new Identifier("@b")]),
-          ],
-        }),
-      ],
-    }),
-  ]);
+  const siblingIngredient: Ingredient = { name: ["b"] };
+  const input = {
+    ingredients: [
+      {
+        name: ["a"],
+        ingredients: [
+          siblingIngredient,
+          { 
+            name: ["c"],
+            steps: [
+              { text: [{ name: "@b" }] },
+            ],
+          },
+        ],
+      },
+    ],
+  };
 
   new Resolver(input).resolve();
 
-  const ingredient = input.ingredients.at(0)!.detail!.at(1)! as Ingredient;
-  const step = ingredient.detail?.at(0) as Step;
+  const ingredient = input.ingredients.at(0)!.ingredients!.at(1)!;
+  const step = ingredient.steps?.at(0)!;
   const identifier = step.text.at(0) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "a:b",
+    identifier.ingredient,
+    siblingIngredient
   );
 });
 
 Deno.test("it resolves sibling references when referent comes second", () => {
-  const input = new Recipe([
-    new Ingredient(["a"], {
-      detail: [
-        new Ingredient(["c"], {
-          id: "a:c",
-          detail: [
-            new Step([new Identifier("@b")]),
-          ],
-        }),
-        new Ingredient(["b"], { id: "a:b" }),
-      ],
-    }),
-  ]);
+  const referentIngredient: Ingredient = { name: ["b"] };
+  const input = {
+    ingredients: [
+      {
+        name: ["a"],
+        ingredients: [
+          { 
+            name: ["c"],
+            steps: [
+              { text: [{ name: "@b" }] },
+            ],
+          },
+          referentIngredient,
+        ],
+      },
+    ],
+  };
 
   new Resolver(input).resolve();
 
-  const ingredient = input.ingredients.at(0)!.detail!.at(0)! as Ingredient;
-  const step = ingredient.detail?.at(0) as Step;
+  const ingredient = input.ingredients.at(0)!.ingredients!.at(0)!;
+  const step = ingredient.steps?.at(0)!;
   const identifier = step.text.at(0) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "a:b",
+    identifier.ingredient,
+    referentIngredient
   );
 });
 
 Deno.test("it resolves global references inside ingredient", () => {
-  const input = new Recipe([
-    new Ingredient(["d", "e"]),
-    new Ingredient(["a"], {
-      detail: [
-        new Ingredient(["b"], {
-          id: "b:c",
-          detail: [
-            new Step([new Identifier("@d-e")]),
-          ],
-        }),
-      ],
-    }),
-  ]);
+  const referentIngredient: Ingredient = { name: ["d", "e"] };
+  const input = {
+    ingredients: [
+      referentIngredient,
+      {
+        name: ["a"],
+        ingredients: [
+          { 
+            name: ["b"],
+            steps: [
+              { text: [{ name: "@d-e" }] },
+            ],
+          },
+        ],
+      },
+    ],
+  };
 
   new Resolver(input).resolve();
 
-  const ingredient = input.ingredients.at(1)!.detail!.at(0)! as Ingredient;
-  const step = ingredient.detail?.at(0) as Step;
+  const ingredient = input.ingredients.at(1)!.ingredients!.at(0)!;
+  const step = ingredient.steps?.at(0)!;
   const identifier = step.text.at(0) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "d-e",
+    identifier.ingredient,
+    referentIngredient
   );
 });
 
 Deno.test("it resolves global references inside ingredient when referent comes second", () => {
-  const input = new Recipe([
-    new Ingredient(["a"], {
-      detail: [
-        new Ingredient(["b"], {
-          id: "b:c",
-          detail: [
-            new Step([new Identifier("@d-e")]),
-          ],
-        }),
-      ],
-    }),
-    new Ingredient(["d", "e"]),
-  ]);
+  const globalIngredient: Ingredient = { name: ["d", "e"] };
+  const input = {
+    ingredients: [
+      {
+        name: ["a"],
+        ingredients: [
+          { 
+            name: ["b"],
+            steps: [
+              { text: [{ name: "@d-e" }] },
+            ],
+          },
+        ],
+      },
+      { name: ["d", "e"] },
+    ],
+  };
 
   new Resolver(input).resolve();
 
-  const ingredient = input.ingredients.at(0)!.detail!.at(0)! as Ingredient;
-  const step = ingredient.detail?.at(0) as Step;
+  const ingredient = input.ingredients.at(0)!.ingredients!.at(0)!;
+  const step = ingredient.steps?.at(0)!;
   const identifier = step.text.at(0) as Identifier;
 
   assertEquals(
-    identifier.ingredientId,
-    "d-e",
+    identifier.ingredient,
+    globalIngredient
   );
 });
