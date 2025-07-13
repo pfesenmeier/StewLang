@@ -16,9 +16,7 @@ export default function Preview({ preview }: { preview: LangContext }) {
           Error: {preview.error?.message}
         </Text>
       )}
-      <Text>
-        {preview.recipe && <Recipe recipe={preview.recipe} />}
-      </Text>
+      {preview.recipe && <Recipe recipe={preview.recipe} />}
       <Text>
         {preview.error && preview.fileContents}
       </Text>

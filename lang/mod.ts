@@ -1,7 +1,7 @@
 import { Parser } from "./parser/parser.ts";
-import type { Recipe } from "./parser/recipe.ts";
 import { Resolver } from "./resolver/resolver.ts";
 import { Scanner } from "./scanner/scanner.ts";
+import type { Recipe } from "./parser/recipe.ts";
 
 export class StewLang {
     public read(input: string): Readonly<Recipe> {
@@ -13,4 +13,7 @@ export class StewLang {
     }
 }
 
-export type { Recipe };
+export type { Ingredient } from "./parser/ingredient.ts";
+export type { Step } from "./parser/step.ts";
+export type { Amount } from "./scanner/amount.ts";
+export type { Recipe } from "./parser/recipe.ts";
