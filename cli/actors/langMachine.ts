@@ -1,6 +1,6 @@
 import { assign, fromPromise, raise, sendTo, setup } from "xstate";
 import { Recipe, StewLang } from "../../lang/mod.ts";
-import { FileTreeActor } from "./fileTreeMachine.ts";
+import type { FileTreeRef } from "./fileTree/fileTreeMachine.ts";
 import { ActorInput } from "./helpers.ts";
 
 export type PreviewEvent = {
@@ -27,16 +27,16 @@ function interpret(fileContents: string[]) {
 }
 
 export type LangContext = {
-  fileTreeRef: FileTreeActor;
+  fileTreeRef: FileTreeRef;
   fileContents: string[] | null;
   current: string[] | null;
   recipe: Recipe | null;
   error: Error | null;
 };
 
-export const langActor = setup({
+export const langMachine = setup({
   types: {
-    input: {} as { fileTreeRef: FileTreeActor },
+    input: {} as { fileTreeRef: FileTreeRef },
     context: {} as LangContext,
     events: {} as CurrentUpdateEvent | { type: "decideToPreview" },
   },
@@ -145,3 +145,5 @@ export const langActor = setup({
     },
   },
 });
+
+export type LangMachine = typeof langMachine;

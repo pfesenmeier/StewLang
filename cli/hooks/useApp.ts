@@ -1,8 +1,8 @@
 import { useMachine, useSelector } from "@xstate/react";
 import { useInput } from "ink";
 import type { FileTreeMachine } from "../actors/fileTreeMachine.ts";
+import type { LangMachine } from "../actors/langMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
-import { langActor } from "../actors/langActor.ts";
 import { ActorRefFrom } from "xstate";
 
 export function useApp(cwd: string) {
@@ -17,7 +17,7 @@ export function useApp(cwd: string) {
   >;
   const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context);
 
-  const langRef = appRef.system.get("lang") as ActorRefFrom<typeof langActor>;
+  const langRef = appRef.system.get("lang") as ActorRefFrom<LangMachine>;
   const langContext = useSelector(langRef, ({ context }) => context);
 
   // langRef.subscribe((snapshot) => {

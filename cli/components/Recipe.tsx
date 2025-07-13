@@ -1,4 +1,4 @@
-import { Recipe as RecipeDef } from "@stew/lang";
+import type { Recipe as RecipeDef } from "@stew/lang";
 import { Text } from "ink";
 
 export default function Recipe({ recipe }: { recipe: RecipeDef }) {

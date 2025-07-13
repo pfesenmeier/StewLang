@@ -1,5 +1,5 @@
 import { Box, Text } from "ink";
-import { LangContext } from "../actors/langActor.ts";
+import type { LangContext } from "../actors/langMachine.ts";
 import Recipe from "./Recipe.tsx";
 
 export default function Preview({ preview }: { preview: LangContext }) {

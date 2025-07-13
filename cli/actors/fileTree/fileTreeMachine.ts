@@ -1,22 +1,25 @@
 import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
-import { Recipe } from "../../lang/mod.ts";
-import { lsActor } from "./lsActor.ts";
-import type { AppActor } from "./appMachine.ts";
+import { Recipe } from "../../../lang/mod.ts";
+import { lsActorLogic } from "../lsActorLogic.ts";
+import type { AppActorRef } from "../appMachine.ts";
 import {
+  goUpDirectory,
   joinPath,
+  loadFiles,
   loadSelected,
+  scroll,
   splitPath,
   toggleSelected,
   tryGetCurrentItem,
 } from "./helpers.ts";
-import { langActor } from "./langActor.ts";
+import { langMachine } from "../langMachine.ts";
 
-export type FileTreeActor = ActorRef<
+export type FileTreeRef = ActorRef<
   Snapshot<unknown>,
-  Events | FileIsValidEvent
+  Events
 >;
 
-export type Context = {
+export type FileTreeContext = {
   // absolute path
   base_path: string[];
   current_is_valid: boolean;
@@ -26,7 +29,7 @@ export type Context = {
   current_preview: Recipe | Error | null;
   file_lists: { items: string[]; current: number | null; selected: number[] }[];
   max_list: 3;
-  appRef: AppActor;
+  appRef: AppActorRef;
 };
 
 export type FileIsValidEvent = {
@@ -45,13 +48,13 @@ export type Events =
 
 export const fileTreeMachine = setup({
   types: {
-    context: {} as Context,
+    context: {} as FileTreeContext,
     events: {} as Events,
-    input: {} as { cwd: string; appRef: AppActor },
+    input: {} as { cwd: string; appRef: AppActorRef },
   },
   actors: {
-    ls: lsActor,
-    lang: langActor,
+    ls: lsActorLogic,
+    lang: langMachine,
   },
 }).createMachine({
   invoke: {
@@ -104,14 +107,7 @@ export const fileTreeMachine = setup({
         },
         onDone: {
           actions: [
-            assign({
-              file_lists: ({ context, event }) =>
-                context.file_lists.concat({
-                  items: event.output,
-                  current: event.output.length > 0 ? 0 : null,
-                  selected: [],
-                }),
-            }),
+            assign((input) => loadFiles(input)),
             assign(({ context, event }) => loadSelected(context, event.output)),
             sendTo(
               "lang",
@@ -138,21 +134,8 @@ export const fileTreeMachine = setup({
       on: {
         next: {
           actions: [
-            assign({
-              file_lists: ({ context }) => {
-                const result = [...context.file_lists];
-                const last = result.pop();
-
-                if (!last) return context.file_lists;
-                if (last.current === null) return context.file_lists;
-
-                if (last.current < last.items.length - 1) {
-                  last.current++;
-                }
-
-                return result.concat(last);
-              },
-            }),
+            assign(({ context }) => scroll(context, "next")),
+            // TODO do not send if current not changed
             sendTo("lang", function ({ context }) {
               return {
                 type: "CurrentUpdateEvent",
@@ -163,22 +146,8 @@ export const fileTreeMachine = setup({
         },
         previous: {
           actions: [
-            assign({
-              file_lists: ({ context }) => {
-                const result = [...context.file_lists];
-                const last = result.pop();
-
-                if (!last) return context.file_lists;
-                if (last.current === null) return context.file_lists;
-
-                if (last.current > 0) {
-                  last.current--;
-                }
-
-                return result.concat(last);
-              },
-            }),
-
+            assign(({ context }) => scroll(context, "previous")),
+            // TODO do not send if current not changed
             sendTo(
               "lang",
               function ({ context }) {
@@ -192,27 +161,12 @@ export const fileTreeMachine = setup({
         },
         up: {
           actions: [
-            assign(({ context }) => {
-              const list_length = context.file_lists.length;
-
-              if (context.base_path.length === 1 && list_length === 1) {
-                return {};
-              } else if (list_length === 1) {
-                return {
-                  file_lists: context.file_lists.slice(0, -1),
-                  base_path: context.base_path.slice(0, -1),
-                };
-              }
-
-              return {
-                file_lists: context.file_lists.slice(0, -1),
-              };
-            }),
+            assign(({ context }) => goUpDirectory(context)),
             raise({ type: "up_reload" }),
           ],
         },
         up_reload: [{
-          // TODO remove, since guaranteed to be non empty if a parent?
+          // reload only if changing root directory
           guard: ({ context }) => context.file_lists.length === 0,
           target: "loading",
         }, { target: "ready" }],

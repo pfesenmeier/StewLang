@@ -1,5 +1,5 @@
 import { Box, Text } from "ink";
-import { AppContext } from "../actors/appMachine.ts";
+import type { AppContext } from "../actors/appMachine.ts";
 
 export default function Selected({ appContext }: { appContext: AppContext }) {
   return (
