@@ -1,11 +1,7 @@
 import { assertEquals } from "jsr:@std/assert/equals";
 import { Parser } from "../parser/parser.ts";
 import { Token, TokenType } from "../scanner/scanner.ts";
-import type { Recipe } from "../parser/recipe.ts";
-import type { Ingredient } from "../parser/ingredient.ts";
-import type { Amount } from "../scanner/amount.ts";
-import type { Step } from "../parser/step.ts";
-import type { Identifier } from "../parser/identifier.ts";
+import type { Ingredient, Recipe } from "@stew/lang";
 
 Deno.test("handles one ingredient", () => {
   const input = [new Token(TokenType.WORD, "pbj")];
@@ -52,18 +48,20 @@ Deno.test("handles ingredient with sub-ingredients", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(output, {
-    ingredients: [
-      {
-        name: ["pbj"],
-        ingredients: [
-          {
-            name: ["jelly"],
-          },
-        ],
-      },
-    ],
-  });
+
+  const jelly: Ingredient = {
+    name: ["jelly"],
+  }
+
+  const pbj: Ingredient = {
+    name: ["pbj"],
+    ingredients: [jelly],
+  };
+  jelly.parent = pbj;
+  const expected: Recipe = {
+    ingredients: [pbj],
+  }
+  assertEquals(output, expected);
 });
 
 Deno.test("handles ingredient with amount", () => {
@@ -75,22 +73,25 @@ Deno.test("handles ingredient with amount", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(output, {
-    ingredients: [
-      {
-        name: ["pbj"],
-        ingredients: [
-          {
-            name: ["jelly"],
-            amount: {
-              amount: 2,
-              unit: "TBSP",
-            },
-          },
-        ],
-      },
-    ],
-  });
+
+  const jelly: Ingredient = {
+    name: ["jelly"],
+    amount: {
+      amount: 2,
+      unit: "TBSP",
+    },
+  };
+
+  const pbj: Ingredient = {
+    name: ["pbj"],
+    ingredients: [jelly],
+  };
+
+  const expected: Recipe = {
+    ingredients: [pbj],
+  };
+
+  assertEquals(output, expected);
 });
 
 Deno.test("handles nested recipe", () => {
@@ -105,23 +106,25 @@ Deno.test("handles nested recipe", () => {
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
   const output = new Parser(input).parse();
-  assertEquals(output, {
-    ingredients: [
-      {
-        name: ["pita", "pockets"],
-        ingredients: [
-          {
-            name: ["hummus"],
-            ingredients: [
-              {
-                name: ["chickpeas"],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+
+  const chickpeas: Ingredient = {
+    name: ["chickpeas"],
+  };
+  const hummus: Ingredient = {
+    name: ["hummus"],
+    ingredients: [chickpeas],
+  };
+  const pitaPockets: Ingredient = {
+    name: ["pita", "pockets"],
+    ingredients: [hummus],
+  };
+
+  chickpeas.parent = hummus;
+  hummus.parent = pitaPockets;
+  const expected: Recipe = {
+    ingredients: [pitaPockets],
+  };
+  assertEquals(output, expected);
 });
 
 Deno.test("handles steps", () => {
@@ -212,25 +215,32 @@ Deno.test("handles full example", () => {
 
   const output = new Parser(input).parse();
 
-  assertEquals(output, {
-    ingredients: [
-      {
-        name: ["potato", "soup"],
-        ingredients: [
-          {
-            name: ["potatoes"],
-            amount: {
-              amount: 2,
-              unit: "LB",
-            },
-          },
-          { name: ["stock"] },
-          { name: ["cream"] },
-        ],
-        steps: [{ text: ["boil", "potatoes"] }],
-      },
-    ],
-  });
+  const potatoes: Ingredient = {
+    name: ["potatoes"],
+    amount: {
+      amount: 2,
+      unit: "LB",
+    },
+  };
+  const stock: Ingredient = {
+    name: ["stock"],
+  };
+  const cream: Ingredient = {
+    name: ["cream"],
+  };
+  const potatoSoup: Ingredient = {
+    name: ["potato", "soup"],
+    ingredients: [potatoes, stock, cream],
+    steps: [{ text: ["boil", "potatoes"] }],
+  };
+  potatoes.parent = potatoSoup;
+  stock.parent = potatoSoup;
+  cream.parent = potatoSoup;
+  const expected: Recipe = {
+    ingredients: [potatoSoup],
+  };
+
+  assertEquals(output, expected);
 });
 
 Deno.test("handles identifiers", () => {

@@ -1,4 +1,4 @@
-import { type Amount, parseAmountNumber } from "../scanner/amount.ts";
+import { type Amount, parseAmount, parseAmountNumber } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
 import type { Ingredient } from "./ingredient.ts";
 import type { Recipe } from "./recipe.ts";
