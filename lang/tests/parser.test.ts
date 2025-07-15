@@ -51,7 +51,7 @@ Deno.test("handles ingredient with sub-ingredients", () => {
 
   const jelly: Ingredient = {
     name: ["jelly"],
-  }
+  };
 
   const pbj: Ingredient = {
     name: ["pbj"],
@@ -60,7 +60,7 @@ Deno.test("handles ingredient with sub-ingredients", () => {
   jelly.parent = pbj;
   const expected: Recipe = {
     ingredients: [pbj],
-  }
+  };
   assertEquals(output, expected);
 });
 
@@ -68,7 +68,7 @@ Deno.test("handles ingredient with amount", () => {
   const input = [
     new Token(TokenType.WORD, "pbj"),
     new Token(TokenType.LEFT_PARENS, "("),
-    new Token(TokenType.WORD, "2T"),
+    new Token(TokenType.NUMBERWORD, "2T"),
     new Token(TokenType.WORD, "jelly"),
     new Token(TokenType.RIGHT_PARENS, ")"),
   ];
@@ -86,6 +86,8 @@ Deno.test("handles ingredient with amount", () => {
     name: ["pbj"],
     ingredients: [jelly],
   };
+
+  jelly.parent = pbj;
 
   const expected: Recipe = {
     ingredients: [pbj],
@@ -199,7 +201,7 @@ Deno.test("handles full example", () => {
     new Token(TokenType.WORD, "soup"),
     new Token(TokenType.LEFT_PARENS, "("),
     new Token(TokenType.NEWLINE, "\n"),
-    new Token(TokenType.WORD, "2lb"),
+    new Token(TokenType.NUMBERWORD, "2lb"),
     new Token(TokenType.WORD, "potatoes"),
     new Token(TokenType.NEWLINE, "\n"),
     new Token(TokenType.WORD, "stock"),
@@ -298,7 +300,7 @@ Deno.test("handles meta and ingredients", () => {
   const output = new Parser(input).parse();
 
   assertEquals(output, {
-    ingredients: [{ name: ["ingredient"]} ],
+    ingredients: [{ name: ["ingredient"] }],
     meta: { $title: "my grandmother's recipe" },
   });
 });

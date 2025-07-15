@@ -1,4 +1,8 @@
-import { type Amount, parseAmount, parseAmountNumber } from "../scanner/amount.ts";
+import {
+  type Amount,
+  parseAmount,
+  parseAmountNumber,
+} from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
 import type { Ingredient } from "./ingredient.ts";
 import type { Recipe } from "./recipe.ts";
@@ -44,25 +48,11 @@ export class Parser {
 
   private ingredient(parent?: Ingredient): Ingredient {
     const name: string[] = [];
-    let amtNum: number | undefined;
     let amount: Amount | null = null;
 
-    if (this.match([TokenType.NUMBER])) {
+    if (this.match([TokenType.NUMBERWORD])) {
       const amtString = this.getPrevious().value;
-      if (amtString) {
-        amtNum = parseAmountNumber(amtString);
-      }
-    }
-
-    if (this.getCurrent().value === TokenType.WORD) {
-      const unit = parseAmountNumber(this.getCurrent().value);
-      if (typeof unit !== "number") {
-        amount = {
-          amount: amtNum ?? 1,
-          unit,
-        };
-        this.advance();
-      }
+      amount = parseAmount(amtString);
     }
 
     while (this.match([TokenType.WORD])) {

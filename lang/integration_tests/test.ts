@@ -6,8 +6,8 @@ const lang = new StewLang();
 
 Deno.test("sample", () => {
   const expected: Recipe = {
-    ingredients: [{  name: ["sample"],}],
-  }
+    ingredients: [{ name: ["sample"] }],
+  };
   assertEquals(lang.read("sample"), expected);
 });
 
@@ -17,10 +17,10 @@ bar
 `;
 
   const expected: Recipe = {
-      ingredients: [{  name: ["foo"],  }, {
-        name: ["bar"],
-      }],
-  }
+    ingredients: [{ name: ["foo"] }, {
+      name: ["bar"],
+    }],
+  };
   assertEquals(
     lang.read(sut),
     expected,

@@ -23,7 +23,7 @@ export class Resolver {
     }
 
     // TODO can an ingredient refer to itself?
-    const steps = ingredient.steps ?? []
+    const steps = ingredient.steps ?? [];
     const identifiers = steps
       .map((step) => step.text)
       .map((text) => text.filter((t) => typeof t !== "string")).flat();
@@ -33,7 +33,7 @@ export class Resolver {
       if (ingredient === undefined) {
         throw new Error(`could not resolve ${identifier.name}`);
       }
-      identifier.ingredient = ingredient
+      identifier.ingredient = ingredient;
     }
 
     for (const sub of subs) {

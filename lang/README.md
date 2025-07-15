@@ -13,20 +13,16 @@
 - etc..
 - what if recipes always had three (prep / cook / plate)?
 
-this creates the default grouping...
-then user can push steps up and down
-
+this creates the default grouping... then user can push steps up and down
 
 - have variable scoping work as expected
-- output a recipe in html? create "stages" ? where anything can be done in parallel?
+- output a recipe in html? create "stages" ? where anything can be done in
+  parallel?
 
-A => B => C
-B => D
-E => F
+A => B => C B => D E => F
 
 - what's the algorithm? shove everything into first stage?
 - then move up the bits that depend on something else?
-
 
 - print out a tree?
 

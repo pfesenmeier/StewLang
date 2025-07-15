@@ -65,33 +65,32 @@ function moveIngredient(
     return;
   }
 
-  const ingredient = stage.ingredients.at(opts.ingredient)
+  const ingredient = stage.ingredients.at(opts.ingredient);
 
   if (!ingredient) {
     console.warn(`stage not found at index ${opts.stage}`);
     return;
   }
 
-  stage.ingredients.splice(opts.ingredient, 1)
+  stage.ingredients.splice(opts.ingredient, 1);
 
-  const nextStageIndex = opts.dir === 'up' ? opts.stage - 1 : opts.stage + 1
-  const nextStage = recipe.stages.at(nextStageIndex)
+  const nextStageIndex = opts.dir === "up" ? opts.stage - 1 : opts.stage + 1;
+  const nextStage = recipe.stages.at(nextStageIndex);
 
   if (!nextStage) {
     console.warn(`next stage not found at index ${opts.stage}`);
     return;
   }
 
-  nextStage.ingredients.push(ingredient)
+  nextStage.ingredients.push(ingredient);
 }
 
-console.log('before', recipe)
-moveIngredient(recipe, { dir: "down", ingredient: 0, stage: 0})
-console.log('after', recipe)
-
+console.log("before", recipe);
+moveIngredient(recipe, { dir: "down", ingredient: 0, stage: 0 });
+console.log("after", recipe);
 
 function validateRecipe(recipe: Recipe) {
-  const validRefs: Record<string, Ingredient> = {}
+  const validRefs: Record<string, Ingredient> = {};
 
   for (const stage of recipe.stages) {
     for (const ingredient of stage.ingredients) {
@@ -104,4 +103,3 @@ function validateRecipe(recipe: Recipe) {
 // validate... iterate over stages, collect all references, and see if you've seen them before
 
 // idea is that give the app a mutable tree?
-

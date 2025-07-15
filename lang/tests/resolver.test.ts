@@ -20,14 +20,14 @@ Deno.test("it resolves sibling references at top level", () => {
   const input = {
     ingredients: [
       aIngredient,
-      { 
-        name: ["b"], 
+      {
+        name: ["b"],
         steps: [
           { text: ["mix", { name: "@a" }] },
         ],
       },
-      { 
-        name: ["b"], 
+      {
+        name: ["b"],
         steps: [
           { text: ["mix", { name: "@a" }, "thoroughly"] },
         ],
@@ -42,7 +42,7 @@ Deno.test("it resolves sibling references at top level", () => {
 
   assertEquals(
     identifier.ingredient,
-    aIngredient
+    aIngredient,
   );
 });
 
@@ -65,7 +65,7 @@ Deno.test("it resolves sibling references inside ingredient", () => {
 
   assertEquals(
     identifier.ingredient,
-    siblingIngredient
+    siblingIngredient,
   );
 });
 
@@ -88,7 +88,7 @@ Deno.test("it resolves sibling references inside ingredient with multiple words"
 
   assertEquals(
     identifier.ingredient,
-    childIngredient
+    childIngredient,
   );
 });
 
@@ -100,7 +100,7 @@ Deno.test("it resolves sibling references inside ingredient", () => {
         name: ["a"],
         ingredients: [
           siblingIngredient,
-          { 
+          {
             name: ["c"],
             steps: [
               { text: [{ name: "@b" }] },
@@ -119,7 +119,7 @@ Deno.test("it resolves sibling references inside ingredient", () => {
 
   assertEquals(
     identifier.ingredient,
-    siblingIngredient
+    siblingIngredient,
   );
 });
 
@@ -130,7 +130,7 @@ Deno.test("it resolves sibling references when referent comes second", () => {
       {
         name: ["a"],
         ingredients: [
-          { 
+          {
             name: ["c"],
             steps: [
               { text: [{ name: "@b" }] },
@@ -150,7 +150,7 @@ Deno.test("it resolves sibling references when referent comes second", () => {
 
   assertEquals(
     identifier.ingredient,
-    referentIngredient
+    referentIngredient,
   );
 });
 
@@ -162,7 +162,7 @@ Deno.test("it resolves global references inside ingredient", () => {
       {
         name: ["a"],
         ingredients: [
-          { 
+          {
             name: ["b"],
             steps: [
               { text: [{ name: "@d-e" }] },
@@ -181,7 +181,7 @@ Deno.test("it resolves global references inside ingredient", () => {
 
   assertEquals(
     identifier.ingredient,
-    referentIngredient
+    referentIngredient,
   );
 });
 
@@ -192,7 +192,7 @@ Deno.test("it resolves global references inside ingredient when referent comes s
       {
         name: ["a"],
         ingredients: [
-          { 
+          {
             name: ["b"],
             steps: [
               { text: [{ name: "@d-e" }] },
@@ -212,6 +212,6 @@ Deno.test("it resolves global references inside ingredient when referent comes s
 
   assertEquals(
     identifier.ingredient,
-    globalIngredient
+    globalIngredient,
   );
 });

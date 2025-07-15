@@ -7,4 +7,4 @@ export type Ingredient = {
   steps?: Step[];
   ingredients?: Ingredient[];
   parent?: Ingredient;
-}
+};

@@ -89,20 +89,20 @@ export class Scanner {
               while (
                 !this.cannotAdvance() &&
                 (
-                  this.isNumberCharacter(this.peek())
+                  this.isNumberOrWordCharacter(this.peek())
                 )
               ) {
                 this.advance();
               }
 
-              const amount = this.source.substring(
+              const numberWord = this.source.substring(
                 start,
                 this.index,
               );
 
               yield this.createToken(
-                TokenType.NUMBER,
-                amount,
+                TokenType.NUMBERWORD,
+                numberWord,
               );
             }
 
@@ -146,6 +146,13 @@ export class Scanner {
     return input.match(/[0-9\.\/]/) !== null;
   }
 
+  private isNumberOrWordCharacter(input: string) {
+    return (
+      this.isWordCharacter(input) ||
+      this.isNumberCharacter(input)
+    );
+  }
+
   private createToken(tokenType: TokenType, literal: string): Token {
     return new Token(tokenType, literal);
   }
@@ -177,7 +184,7 @@ export const TokenType = {
 
   NEWLINE: "NEWLINE",
   WHITESPACE: "WHITESPACE",
-  NUMBER: "NUMBER",
+  NUMBERWORD: "NUMBERWORD",
 
   IDENTIFIER: "IDENTIFIER",
   META: "META",

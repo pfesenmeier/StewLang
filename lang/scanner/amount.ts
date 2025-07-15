@@ -1,24 +1,35 @@
 export type Amount = {
-  amount: number;
-  unit: UnitType;
+  amount?: number;
+  unit?: UnitType;
 };
 
-export function parseAmount(str: string): Amount {
-  const chars = str.split("")
-  let unitIndex = -1 
+// Amount string start with a number, ends with a unit
+// acceptable: 1_tsp, 1tsp 1_t, 1tsp, 1t
+
+export function parseAmount(str: string): Amount | null {
+  const chars = str.split("");
+  let unitIndex = -1;
   for (const [index, char] of chars.entries()) {
-    if (char.match(/[a-zA-Z]/)) {
-      unitIndex = index
-      break
+    if (char.match(/[a-zA-Z_]/)) {
+      unitIndex = index;
+      break;
     }
   }
 
-  return {
-    amount: parseAmountNumber(str.slice(0, unitIndex)),
-    unit: parseUnit(str.slice(unitIndex))
-  }
-}
+  const amountStr = str.slice(0, unitIndex);
+  const amount = parseAmountNumber(amountStr);
+  const unitStr = str.slice(unitIndex).replaceAll(/_/g, "");
+  const unit = parseUnit(unitStr);
 
+  if (!amount && unit === "NOUNIT") {
+    return null;
+  }
+
+  return {
+    amount,
+    unit,
+  };
+}
 
 export function parseAmountNumber(amountInput: string): number {
   // TODO how does it parse '1/2/3c'
@@ -36,11 +47,12 @@ export function parseUnit(unitInput: string): UnitType {
     return "NOUNIT";
   }
 
-  if (unitInput.startsWith("-")) {
-    unitInput = unitInput.slice(1);
+  if (unitInput === "t") {
+    return "TSP";
+  } else if (unitInput === "T") {
+    return "TBSP";
   }
 
-  const originalUnitInput = unitInput;
   unitInput = unitInput.toLowerCase();
 
   if (["g", "gram", "grams"].includes(unitInput)) {
@@ -49,12 +61,6 @@ export function parseUnit(unitInput: string): UnitType {
 
   if (["oz"].includes(unitInput)) {
     return "OZ";
-  }
-
-  if (originalUnitInput === "t") {
-    return "TSP";
-  } else if (originalUnitInput === "T") {
-    return "TBSP";
   }
 
   if (["tsp", "teaspoon", "teaspoons", "tsps"].includes(unitInput)) {
