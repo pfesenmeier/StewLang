@@ -12,7 +12,9 @@ export default function Ingredient({ ingredient }: { ingredient: Ingredient }) {
       <Box gap={1} flexDirection="row">
         <Text>{ingredient?.amount?.amount}</Text>
         <Text>{ingredient?.amount?.unit}</Text>
-        <Text color="blue">{ingredient.name.join(" ")}</Text>
+        <Text color="blue" backgroundColor="black" bold>
+          {" " + ingredient.name.join(" ") + " "}
+        </Text>
       </Box>
       {ingredient.ingredients && (
         <Box flexDirection="row" flexWrap="wrap">
@@ -25,7 +27,10 @@ export default function Ingredient({ ingredient }: { ingredient: Ingredient }) {
         <Box borderStyle="round" borderColor="magenta" flexDirection="column">
           {/* todo allow for 1 step asides to be placed to the right of the ingredient */}
           {ingredient.steps.map((step, index) => (
-            <Text color="magenta" key={index}>{step.text.join(" ")}</Text>
+            <Text backgroundColor="black" color="magenta" key={index}>
+              {` ${index + 1}. ` +
+                step.text.join(" ") + " "}
+            </Text>
           ))}
         </Box>
       )}
