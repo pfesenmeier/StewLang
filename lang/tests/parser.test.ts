@@ -154,6 +154,34 @@ Deno.test("handles steps", () => {
   });
 });
 
+Deno.test("handles number words in steps", () => {
+  const input = [
+    new Token(TokenType.WORD, "potatoes"),
+    new Token(TokenType.LEFT_PARENS, "("),
+    new Token(TokenType.DASH, "-"),
+    new Token(TokenType.WORD, "boil"),
+    new Token(TokenType.WORD, "for"),
+    new Token(TokenType.NUMBERWORD, "2"),
+    new Token(TokenType.WORD, "minutes"),
+    new Token(TokenType.RIGHT_PARENS, ")"),
+  ];
+
+  const output = new Parser(input).parse();
+
+  assertEquals(output, {
+    ingredients: [
+      {
+        name: ["potatoes"],
+        steps: [
+          {
+            text: ["boil", "for", "2", "minutes"],
+          },
+        ],
+      },
+    ],
+  });
+})
+
 Deno.test("handles trailing newline separated list of ingredients", () => {
   const input = [
     new Token(TokenType.WORD, "potatoes"),

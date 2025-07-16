@@ -3,18 +3,18 @@ warm bowl (
 )
 
 egg mixture (
-  2-large eggs, room temp
-  2-large yolks, room temp
-  2-gloves garlic ( - grated )
-  1-oz pecorino Romano, grated
-  1-oz parm, grated
+  2 large eggs, room temp
+  2 large yolks, room temp
+  2cloves garlic ( - grated )
+  1oz pecorino Romano ( - grated )
+  1oz parm ( - grated )
   salt
   black pepper
   - mix
 )
 
 bacon (
-  3.5-oz slab guanciale, pancetta, or bacon (
+  3.5oz slab guanciale, pancetta, or bacon (
     - sliced into 1/4" by 1/3" squares
   ) 
   - saute until starting to crisp up
@@ -22,7 +22,7 @@ bacon (
 )
 
 pasta (
-  12-oz spaghetti
+  12oz spaghetti
   - cook until almost al-dente
   - reserve 1 cup pasta water
   - add spaghetti to @bacon, stir for a minute or so

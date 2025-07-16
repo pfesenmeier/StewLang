@@ -135,7 +135,7 @@ export class Scanner {
   }
 
   private isWordCharacter(input: string) {
-    return input.match(/[A-Za-z\-]/) !== null;
+    return input.match(/[A-Za-z\-\"]/) !== null;
   }
 
   private isNumber(input: string) {

@@ -4,7 +4,6 @@ import { CurrentUpdateEvent } from "./langMachine.ts";
 export function setCurrent(
   { event: { data } }: { event: CurrentUpdateEvent },
 ): Partial<LangContext> {
-
   // TODO handle multi selection
   const cannotPreview = data === null ||
     typeof data === "string" && !data.endsWith(".sw");
@@ -14,7 +13,7 @@ export function setCurrent(
       current: null,
       fileContents: null,
       recipe: null,
-      error: null
+      error: null,
     };
   }
 

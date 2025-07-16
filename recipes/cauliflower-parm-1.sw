@@ -18,7 +18,7 @@ dredge (
 fry (
     1/2c olive oil
   - fill large skillet with 1/2" olive oil, heat over medium-high heat
-  - after dredge, fry prep.cauliflower until golden brown, transfer to paper towel-lined plate
+  - after dredge fry prep.cauliflower until golden brown, transfer to paper towel-lined plate
 )
 
 assemble (

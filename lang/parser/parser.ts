@@ -121,9 +121,9 @@ export class Parser {
 
   step(): Step {
     const text: StepWord[] = [];
-    while (this.match([TokenType.WORD, TokenType.IDENTIFIER])) {
+    while (this.match([TokenType.WORD, TokenType.IDENTIFIER, TokenType.NUMBERWORD])) {
       const previous = this.getPrevious();
-      if (previous.type === TokenType.WORD) {
+      if ([TokenType.WORD, TokenType.NUMBERWORD].includes(previous.type)) {
         text.push(previous.value);
       } else {
         text.push({ name: previous.value });
