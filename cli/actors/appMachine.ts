@@ -1,5 +1,6 @@
 import { ActorRef, assign, setup, Snapshot } from "xstate";
 import { fileTreeMachine } from "./fileTree/fileTreeMachine.ts";
+import { welcomeMachineLogic } from "./welcomeMachineLogic.ts";
 
 export type SelectionUpdateEvent = {
   type: "SelectionUpdateEvent";
@@ -15,6 +16,7 @@ export type AppContext = { cwd: string; selected_files: string[] };
 export const appMachine = setup({
   actors: {
     fileTree: fileTreeMachine,
+    welcome: welcomeMachineLogic,
   },
   types: {
     input: {} as { cwd: string },
@@ -28,8 +30,15 @@ export const appMachine = setup({
     input: ({ self, context: { cwd } }) => ({ appRef: self, cwd }),
   },
   context: ({ input }) => ({ cwd: input.cwd, selected_files: [] }),
-  initial: "select_recipe",
+  initial: "welcome",
   states: {
+    welcome: {
+      invoke: {
+        src: "welcome",
+        systemId: "welcome",
+        onDone: "select_recipe",
+      },
+    },
     select_recipe: {
       on: {
         next: {

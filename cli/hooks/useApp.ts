@@ -1,12 +1,13 @@
 import { useMachine, useSelector } from "@xstate/react";
 import { useInput } from "ink";
-import type { FileTreeMachine } from "../actors/fileTreeMachine.ts";
-import type { LangMachine } from "../actors/langMachine.ts";
+import type { FileTreeMachine } from "../actors/fileTree/fileTreeMachine.ts";
+import type { LangMachine } from "../actors/lang/langMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
 import { ActorRefFrom } from "xstate";
+import { WelcomeMachine } from "../actors/welcomeMachineLogic.ts";
 
 export function useApp(cwd: string) {
-  const [snapshot, _send, appRef] = useMachine(appMachine, {
+  const [snapshot, _, appRef] = useMachine(appMachine, {
     input: {
       cwd,
     },
@@ -20,13 +21,25 @@ export function useApp(cwd: string) {
   const langRef = appRef.system.get("lang") as ActorRefFrom<LangMachine>;
   const langContext = useSelector(langRef, ({ context }) => context);
 
+  const welcomeRef = appRef.system.get("welcome") as ActorRefFrom<
+    WelcomeMachine
+  >;
+  const welcomeIsOpen = useSelector(
+    welcomeRef,
+    (machine) => machine?.status === "active",
+  );
+  const closeWelcome = () => welcomeRef.send({ type: "close" });
+
   // langRef.subscribe((snapshot) => {
   //   console.log(snapshot.value)
   // })
 
   useInput((input, key) => {
     const send = fileTreeRef.send;
-    if (input === "q") {
+
+    if (welcomeIsOpen) {
+      closeWelcome();
+    } else if (input === "q") {
       Deno.exit(0);
     } else if (key.downArrow) {
       send({ type: "next" });
@@ -45,5 +58,6 @@ export function useApp(cwd: string) {
     fileTree: fileTreeContext,
     app: snapshot.context,
     preview: langContext,
+    welcomeIsOpen,
   };
 }
