@@ -1,10 +1,7 @@
 import { useMachine, useSelector } from "@xstate/react";
 import { useInput } from "ink";
-import type { FileTreeMachine } from "../actors/fileTree/fileTreeMachine.ts";
-import type { LangMachine } from "../actors/lang/langMachine.ts";
 import { appMachine } from "../actors/appMachine.ts";
-import { ActorRefFrom } from "xstate";
-import { WelcomeMachine } from "../actors/welcomeMachineLogic.ts";
+import { getActor } from "../actors/system.ts";
 
 export function useApp(cwd: string) {
   const [snapshot, _, appRef] = useMachine(appMachine, {
@@ -13,17 +10,15 @@ export function useApp(cwd: string) {
     },
   });
 
-  const fileTreeRef = appRef.system.get("fileTree") as ActorRefFrom<
-    FileTreeMachine
-  >;
+  const system = appRef.system;
+
+  const fileTreeRef = getActor(system, "fileTree");
   const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context);
 
-  const langRef = appRef.system.get("lang") as ActorRefFrom<LangMachine>;
+  const langRef = getActor(system, "lang");
   const langContext = useSelector(langRef, ({ context }) => context);
 
-  const welcomeRef = appRef.system.get("welcome") as ActorRefFrom<
-    WelcomeMachine
-  >;
+  const welcomeRef = getActor(system, "welcome");
   const welcomeIsOpen = useSelector(
     welcomeRef,
     (machine) => machine?.status === "active",
@@ -51,6 +46,10 @@ export function useApp(cwd: string) {
       send({ type: "in" });
     } else if (input === " ") {
       send({ type: "toggle" });
+      // } else if (key.tab && key.shift) {
+      //   send({ type: "focusPrevious" });
+      // } else if (key.tab) {
+      //   send({ type: "focusNext" });
     }
   });
 

@@ -1,6 +1,7 @@
 import process from "node:process";
 import { useEffect, useState } from "react";
 
+// https://github.com/vadimdemedes/ink/issues/341#issuecomment-1312342431
 export function useStdoutDimensions() {
   const { columns, rows } = process.stdout;
   const [size, setSize] = useState({ columns, rows });
@@ -17,5 +18,5 @@ export function useStdoutDimensions() {
     };
   }, []);
 
-  return { columns: size.columns, rows: size.rows }
+  return { columns: size.columns, rows: size.rows };
 }

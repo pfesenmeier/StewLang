@@ -1,4 +1,4 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import FilePicker from "./FilePicker.tsx";
 import { useApp } from "../hooks/useApp.ts";
 import Selected from "./Selected.tsx";
@@ -10,19 +10,17 @@ export default function App({ rootDir }: { rootDir: string }) {
   const { fileTree: context, app: appContext, preview, welcomeIsOpen } = useApp(
     rootDir,
   );
-  const {columns, rows} = useStdoutDimensions();
+  const { columns } = useStdoutDimensions();
 
   return (
-    <Box height={rows} width={columns} flexDirection="column">
-    {welcomeIsOpen ? <Welcome /> : 
-      <Box flexDirection="column">
-        <Text>{"columns: " + columns}</Text>
-        <Text>{"rows: " + rows}</Text>
-
-        <Selected appContext={appContext} />
-        <FilePicker context={context} />
-        <Preview preview={preview} />
-      </Box>}
+    <Box width={columns} flexDirection="column">
+      {welcomeIsOpen ? <Welcome /> : (
+        <Box flexDirection="column">
+          <Selected appContext={appContext} />
+          <FilePicker context={context} />
+          <Preview preview={preview} />
+        </Box>
+      )}
     </Box>
   );
 }

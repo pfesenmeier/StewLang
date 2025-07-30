@@ -10,7 +10,7 @@
     "@types/ink": "npm:@types/ink@^2.0.3",
     "@types/react": "npm:@types/react@^19.1.7",
     "@xstate/react": "npm:@xstate/react@^6.0.0",
-    "ink": "npm:ink@^6.0.0",
+    "ink": "npm:ink@^6.1.0",
     "ink-big-text": "npm:ink-big-text@^2.0.0",
     "ink-gradient": "npm:ink-gradient@^3.0.0",
     "react": "npm:react@^19.1.0",
