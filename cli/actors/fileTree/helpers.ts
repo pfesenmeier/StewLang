@@ -1,5 +1,5 @@
 import { dirname, join, relative, SEPARATOR } from "@std/path";
-import { FileTreeContext } from "./fileTreeMachine.ts";
+import { FileTreeContext } from "./fileTreeActor.ts";
 import { DoneActorEvent } from "xstate";
 
 const root = Deno.build.os === "windows" ? "C:\\" : "/";

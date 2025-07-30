@@ -1,18 +1,13 @@
 import { assign, raise, sendTo, setup } from "xstate";
-import { Recipe, StewLang } from "../../../lang/mod.ts";
-import type { FileTreeRef } from "../fileTree/fileTreeMachine.ts";
-import { readFilesActorLogic } from "./readFileActorLogic.ts";
+import { readFilesActor } from "../readFileActor.ts";
 import { setCurrent } from "./helpers.ts";
+import { Recipe, StewLang } from "@stew/lang";
+import { getActor } from "../system.ts";
 
-export type PreviewEvent = {
-  type: "PreviewEvent";
-  data: boolean;
-};
-
-export type CurrentUpdateEvent = {
+export type PreviewEvents = {
   type: "CurrentUpdateEvent";
   data: string | string[] | null;
-};
+} | { type: "decideToPreview" };
 
 // TODO what to do about the headers on each file...
 function interpret(fileContents: string[]) {
@@ -23,32 +18,27 @@ function interpret(fileContents: string[]) {
   return lang.read(file);
 }
 
-export type LangContext = {
-  fileTreeRef: FileTreeRef;
+export type PreviewContext = {
   fileContents: string[] | null;
   current: string[] | null;
   recipe: Recipe | null;
   error: Error | null;
 };
 
-export const langMachine = setup({
+export const previewActor = setup({
   types: {
-    input: {} as { fileTreeRef: FileTreeRef },
-    context: {} as LangContext,
-    events: {} as CurrentUpdateEvent | { type: "decideToPreview" },
+    context: {} as PreviewContext,
+    events: {} as PreviewEvents,
   },
   actors: {
-    read: readFilesActorLogic,
+    read: readFilesActor,
   },
 }).createMachine({
-  context({ input: { fileTreeRef } }) {
-    return {
-      fileTreeRef,
-      fileContents: null,
-      current: null,
-      recipe: null,
-      error: null,
-    };
+  context: {
+    fileContents: null,
+    current: null,
+    recipe: null,
+    error: null,
   },
   initial: "ready",
   states: {
@@ -101,7 +91,7 @@ export const langMachine = setup({
               }
             }),
             sendTo(
-              ({ context }) => context.fileTreeRef,
+              ({ system }) => getActor(system, "fileTree"),
               function ({ context }) {
                 return {
                   type: "FileIsValidEvent",
@@ -116,7 +106,7 @@ export const langMachine = setup({
     },
     "respond": {
       entry: sendTo(
-        ({ context }) => context.fileTreeRef,
+        ({ system }) => getActor(system, "fileTree"),
         function ({ context }) {
           return {
             type: "FileIsValidEvent",
@@ -128,5 +118,3 @@ export const langMachine = setup({
     },
   },
 });
-
-export type LangMachine = typeof langMachine;

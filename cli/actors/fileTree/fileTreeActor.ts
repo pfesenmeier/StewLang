@@ -1,8 +1,5 @@
-import { ActorRef, assign, raise, sendTo, setup, Snapshot } from "xstate";
-import { Recipe } from "../../../lang/mod.ts";
-import { lsActorLogic } from "../lsActorLogic.ts";
-import type { AppActorRef } from "../appMachine.ts";
-import { langMachine } from "../lang/langMachine.ts";
+import { assign, raise, sendTo, setup } from "xstate";
+import { lsActor } from "../lsActor.ts";
 import {
   getCurrentItem,
   goUpDirectory,
@@ -13,11 +10,8 @@ import {
   toggleSelected,
   tryGetCurrentItem,
 } from "./helpers.ts";
-
-export type FileTreeRef = ActorRef<
-  Snapshot<unknown>,
-  Events
->;
+import { Recipe } from "@stew/lang";
+import { getActor } from "../system.ts";
 
 export type FileTreeContext = {
   // absolute path
@@ -29,50 +23,37 @@ export type FileTreeContext = {
   current_preview: Recipe | Error | null;
   file_lists: { items: string[]; current: number | null; selected: number[] }[];
   max_list: 3;
-  appRef: AppActorRef;
 };
 
-export type FileIsValidEvent = {
-  type: "FileIsValidEvent";
-  data: boolean;
-};
-
-export type Events =
+export type FileTreeEvents =
   | { type: "previous" }
   | { type: "next" }
   | { type: "up" }
   | { type: "in" }
   | { type: "up_reload" }
   | { type: "toggle" }
-  | FileIsValidEvent;
+  | {
+    type: "FileIsValidEvent";
+    data: boolean;
+  };
 
-export const fileTreeMachine = setup({
+export const fileTreeActor = setup({
   types: {
     context: {} as FileTreeContext,
-    events: {} as Events,
-    input: {} as { cwd: string; appRef: AppActorRef },
+    events: {} as FileTreeEvents,
+    input: {} as { cwd: string },
   },
   actors: {
-    ls: lsActorLogic,
-    lang: langMachine,
+    ls: lsActor,
   },
 }).createMachine({
-  invoke: {
-    id: "lang",
-    systemId: "lang",
-    src: "lang",
-    input: ({ self }) => ({
-      fileTreeRef: self,
-    }),
-  },
-  context: ({ input: { cwd, appRef } }) => ({
+  context: ({ input: { cwd } }) => ({
     selected_files: [],
     current_is_valid: false,
     base_path: splitPath(cwd ?? "."),
     current_preview: null,
     file_lists: [],
     max_list: 3,
-    appRef,
   }),
   initial: "loading",
   on: {
@@ -96,7 +77,7 @@ export const fileTreeMachine = setup({
             assign((input) => loadFiles(input)),
             assign(({ context, event }) => loadSelected(context, event.output)),
             sendTo(
-              "lang",
+              ({ system }) => getActor(system, "preview"),
               ({ context }) => {
                 return {
                   type: "CurrentUpdateEvent",
@@ -111,23 +92,29 @@ export const fileTreeMachine = setup({
     },
     "ready": {
       // whenever loading is done, includes on first load
-      entry: sendTo("lang", ({ context }) => {
-        return {
-          type: "CurrentUpdateEvent",
-          data: tryGetCurrentItem(context),
-        };
-      }),
+      entry: sendTo(
+        ({ system }) => getActor(system, "preview"),
+        ({ context }) => {
+          return {
+            type: "CurrentUpdateEvent",
+            data: tryGetCurrentItem(context),
+          };
+        },
+      ),
       on: {
         next: {
           actions: [
             assign(({ context }) => scroll(context, "next")),
             // TODO do not send if current not changed
-            sendTo("lang", ({ context }) => {
-              return {
-                type: "CurrentUpdateEvent",
-                data: tryGetCurrentItem(context),
-              };
-            }),
+            sendTo(
+              ({ system }) => getActor(system, "preview"),
+              ({ context }) => {
+                return {
+                  type: "CurrentUpdateEvent",
+                  data: tryGetCurrentItem(context),
+                };
+              },
+            ),
           ],
         },
         previous: {
@@ -135,7 +122,7 @@ export const fileTreeMachine = setup({
             assign(({ context }) => scroll(context, "previous")),
             // TODO do not send if current not changed
             sendTo(
-              "lang",
+              ({ system }) => getActor(system, "preview"),
               ({ context }) => {
                 return {
                   type: "CurrentUpdateEvent",
@@ -164,7 +151,7 @@ export const fileTreeMachine = setup({
         toggle: {
           actions: [
             assign(({ context }) => toggleSelected(context)),
-            sendTo(({ context }) => context.appRef, ({ context }) => ({
+            sendTo(({ system }) => getActor(system, "app"), ({ context }) => ({
               type: "SelectionUpdateEvent",
               data: context.selected_files,
             })),
@@ -174,5 +161,3 @@ export const fileTreeMachine = setup({
     },
   },
 });
-
-export type FileTreeMachine = typeof fileTreeMachine;

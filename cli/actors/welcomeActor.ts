@@ -2,9 +2,7 @@ import { setup } from "xstate";
 
 export type CloseEvent = { type: "close" };
 
-export type WelcomeMachine = typeof welcomeMachineLogic;
-
-export const welcomeMachineLogic = setup({
+export const welcomeActor = setup({
   types: {
     events: {} as CloseEvent,
   },

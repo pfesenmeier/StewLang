@@ -1,8 +1,8 @@
 import { Box, Text } from "ink";
-import type { LangContext } from "../actors/langMachine.ts";
 import Recipe from "./Recipe.tsx";
+import { PreviewContext } from "../actors/preview/previewActor.ts";
 
-export default function Preview({ preview }: { preview: LangContext }) {
+export default function Preview({ preview }: { preview: PreviewContext }) {
   return (
     <Box
       borderColor={preview.error ? "red" : "green"}

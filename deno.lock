@@ -16,7 +16,6 @@
     "jsr:@std/path@^1.1.0": "1.1.0",
     "jsr:@ts-morph/bootstrap@0.25": "0.25.0",
     "jsr:@ts-morph/common@0.25": "0.25.0",
-    "npm:@types/ink@^2.0.3": "2.0.3_@types+react@19.1.9_react@19.1.1",
     "npm:@types/node@*": "22.15.15",
     "npm:@types/react@^19.1.7": "19.1.9",
     "npm:@xstate/react@6": "6.0.0_react@19.1.1_xstate@5.20.1",
@@ -87,13 +86,6 @@
       "dependencies": [
         "@types/tinycolor2"
       ]
-    },
-    "@types/ink@2.0.3_@types+react@19.1.9_react@19.1.1": {
-      "integrity": "sha512-DYKIKEJqhsGfQ/jgX0t9BzfHmBJ/9dBBT2MDsHAQRAfOPhEe7LZm5QeNBx1J34/e108StCPuJ3r4bh1y38kCJA==",
-      "dependencies": [
-        "ink"
-      ],
-      "deprecated": true
     },
     "@types/node@22.15.15": {
       "integrity": "sha512-R5muMcZob3/Jjchn5LcO8jdKwSCbzqmPB6ruBxMcf9kbxtniZHP327s6C37iOfuw8mbKK3cAQa7sEl7afLrQ8A==",

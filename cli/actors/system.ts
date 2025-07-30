@@ -1,25 +1,54 @@
-import type { ActorRefFrom, ActorSystem } from "xstate";
-import { fileTreeMachine } from "./fileTree/fileTreeMachine.ts";
-import { appMachine } from "./appMachine.ts";
-import { lsActorLogic } from "./lsActorLogic.ts";
-import { welcomeMachineLogic } from "./welcomeMachineLogic.ts";
-import { langMachine } from "./lang/langMachine.ts";
+import {
+  ActorRef,
+  type ActorRefFrom,
+  type ActorSystem,
+  EventObject,
+  MachineContext,
+  MachineSnapshot,
+} from "xstate";
 
-// TODO must manually add systemIds everywhere something is used!
-// TODO... "invoke" all actors on root app machine... in definition or in use
+import { FileTreeContext, FileTreeEvents } from "./fileTree/fileTreeActor.ts";
+import { appActor } from "./appActor.ts";
+import { lsActor } from "./lsActor.ts";
+import { welcomeActor } from "./welcomeActor.ts";
+import { PreviewContext, PreviewEvents } from "./preview/previewActor.ts";
+
+// used to prevent circular dependencies
+type MachineActorRef<
+  TContext extends MachineContext,
+  TEvent extends EventObject,
+> = ActorRef<
+  // deno-lint-ignore no-explicit-any
+  MachineSnapshot<TContext, any, any, any, any, any, any, any>,
+  TEvent
+>;
 
 type System = {
-  fileTree: ActorRefFrom<typeof fileTreeMachine>;
-  app: ActorRefFrom<typeof appMachine>;
-  ls: ActorRefFrom<typeof lsActorLogic>;
-  welcome: ActorRefFrom<typeof welcomeMachineLogic>;
-  lang: ActorRefFrom<typeof langMachine>;
+  app: ActorRefFrom<typeof appActor>;
+  fileTree: MachineActorRef<FileTreeContext, FileTreeEvents>;
+  preview: MachineActorRef<PreviewContext, PreviewEvents>;
+  welcome: ActorRefFrom<typeof welcomeActor>;
+  ls: ActorRefFrom<typeof lsActor>;
 };
 
-// deno-lint-ignore no-explicit-any
+export const systemIds: Record<keyof System, keyof System> = {
+  app: "app",
+  fileTree: "fileTree",
+  preview: "preview",
+  welcome: "welcome",
+  ls: "ls",
+};
+
 export function getActor<TActorKey extends keyof System>(
+  // deno-lint-ignore no-explicit-any
   system: ActorSystem<any>,
   systemId: TActorKey,
 ) {
-  return system.get(systemId) as System[TActorKey];
+  const ref = system.get(systemId);
+
+  if (!ref) {
+    throw new Error(`Actor with systemId "${systemId}" not found in system.`);
+  }
+
+  return ref as System[TActorKey];
 }

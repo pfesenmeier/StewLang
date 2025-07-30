@@ -1,5 +1,5 @@
 import { Box, Text } from "ink";
-import type { FileTreeContext } from "../actors/fileTree/fileTreeMachine.ts";
+import type { FileTreeContext } from "../actors/fileTree/fileTreeActor.ts";
 
 export default function FilePicker(
   { context }: { context: FileTreeContext },

@@ -2,7 +2,7 @@ import { parse } from "@std/path";
 import { fromPromise } from "xstate";
 import { ActorInput } from "./helpers.ts";
 
-export const lsActorLogic = fromPromise(
+export const lsActor = fromPromise(
   async ({ input: { folder } }: ActorInput<{ folder: string }>) => {
     const fileNames: string[] = [];
 
