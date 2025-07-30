@@ -31,7 +31,8 @@ export function useApp(cwd: string) {
 
   useInput((input, key) => {
     const sendFileTree = fileTreeRef.send;
-    const sendWelcome = welcomeRef.send;
+    // TODO welcomeRef is unique since will be torn down
+    const sendWelcome = welcomeRef?.send ?? function () {};
 
     if (welcomeIsOpen) {
       sendWelcome({ type: "close" });

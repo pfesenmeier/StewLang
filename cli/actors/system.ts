@@ -46,9 +46,5 @@ export function getActor<TActorKey extends keyof System>(
 ) {
   const ref = system.get(systemId);
 
-  if (!ref) {
-    throw new Error(`Actor with systemId "${systemId}" not found in system.`);
-  }
-
   return ref as System[TActorKey];
 }
