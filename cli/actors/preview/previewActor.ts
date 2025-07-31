@@ -21,6 +21,7 @@ function interpret(fileContents: string[]) {
 export type PreviewContext = {
   fileContents: string[] | null;
   current: string[] | null;
+  currentIngredient: number | null;
   recipe: Recipe | null;
   error: Error | null;
 };
@@ -36,6 +37,7 @@ export const previewActor = setup({
 }).createMachine({
   context: {
     fileContents: null,
+    currentIngredient: null,
     current: null,
     recipe: null,
     error: null,
@@ -89,6 +91,11 @@ export const previewActor = setup({
                   error: error as Error,
                 };
               }
+            }),
+            assign(({ context }) => {
+              return {
+                currentIngredient: context.recipe?.ingredients.at(0) ? 0 : null,
+              };
             }),
             sendTo(
               ({ system }) => getActor(system, "fileTree"),

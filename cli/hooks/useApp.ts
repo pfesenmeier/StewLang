@@ -13,11 +13,15 @@ export function useApp(cwd: string) {
   const fileTreeRef = getActor(system, "fileTree");
   const fileTreeContext = useSelector(fileTreeRef, ({ context }) => context);
 
-  const previewRef = getActor(system, "preview");
-  const previewContext = useSelector(previewRef, ({ context }) => context);
+  const previewContext = useSelector(
+    getActor(system, "preview"),
+    ({ context }) => context,
+  );
 
-  const appRef = getActor(system, "app");
-  const appContext = useSelector(appRef, ({ context }) => context);
+  const appContext = useSelector(
+    getActor(system, "app"),
+    ({ context }) => context,
+  );
 
   const welcomeRef = getActor(system, "welcome");
   const welcomeIsOpen = useSelector(
