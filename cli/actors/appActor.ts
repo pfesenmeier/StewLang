@@ -1,10 +1,8 @@
-import { assign, setup } from "xstate";
-import { welcomeActor } from "./welcomeActor.ts";
+import { assign, sendTo, setup } from "xstate";
+import { getActor } from "./system.ts";
+import { KeyPressEvents } from "./keyPressEvents.ts";
 
 export const appActor = setup({
-  actors: {
-    welcome: welcomeActor,
-  },
   types: {
     context: {} as AppContext,
     events: {} as AppEvents,
@@ -14,13 +12,58 @@ export const appActor = setup({
   initial: "welcome",
   states: {
     welcome: {
-      invoke: {
-        src: "welcome",
-        systemId: "welcome",
-        onDone: "select_recipe",
+      on: {
+        space: "select_recipe",
       },
     },
     select_recipe: {
+      initial: "browse",
+      states: {
+        browse: {
+          on: {
+            left: {
+              actions: sendTo(({ system }) => getActor(system, "fileTree"), {
+                type: "up",
+              }),
+            },
+            right: {
+              actions: sendTo(({ system }) => getActor(system, "fileTree"), {
+                type: "in",
+              }),
+            },
+            up: {
+              actions: sendTo(({ system }) => getActor(system, "fileTree"), {
+                type: "previous",
+              }),
+            },
+            down: {
+              actions: sendTo(({ system }) => getActor(system, "fileTree"), {
+                type: "next",
+              }),
+            },
+            space: {
+              actions: sendTo(({ system }) => getActor(system, "fileTree"), {
+                type: "toggle",
+              }),
+            },
+            tab: "preview",
+            shiftab: "selected"
+          },
+        },
+        preview: {
+          on: {
+            tab: "selected",
+            shiftab: "browse"
+          }
+        },
+        selected: {
+          on: {
+            tab: "browse",
+            shiftab: "preview"
+          }
+        },
+        help: {},
+      },
       on: {
         next: {
           target: "order_recipe",
@@ -36,11 +79,12 @@ export const appActor = setup({
   },
 });
 
-type AppEvents =
+export type AppEvents =
   | {
     type: "SelectionUpdateEvent";
     data: string[];
   }
-  | { type: "next" };
+  | { type: "next" }
+  | KeyPressEvents;
 
 export type AppContext = { selected_files: string[] };

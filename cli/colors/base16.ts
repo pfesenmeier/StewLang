@@ -42,10 +42,9 @@ export function* surfaceColors(base16: Base16) {
 
   const surfaces = [
     base16.base00,
-    base16.base01,
-    base16.base02,
     base16.base03,
     base16.base04,
+    base16.base02,
   ];
 
   while (true) {

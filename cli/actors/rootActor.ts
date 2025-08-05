@@ -3,7 +3,6 @@ import { appActor } from "./appActor.ts";
 import { fileTreeActor } from "./fileTree/fileTreeActor.ts";
 import { previewActor } from "./preview/previewActor.ts";
 import { systemIds } from "./system.ts";
-import { welcomeActor } from "./welcomeActor.ts";
 
 export const rootActor = setup({
   types: {
@@ -14,7 +13,6 @@ export const rootActor = setup({
     fileTree: fileTreeActor,
     app: appActor,
     preview: previewActor,
-    welcome: welcomeActor,
   },
 }).createMachine({
   initial: "running",

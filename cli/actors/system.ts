@@ -8,9 +8,8 @@ import {
 } from "xstate";
 
 import { FileTreeContext, FileTreeEvents } from "./fileTree/fileTreeActor.ts";
-import { appActor } from "./appActor.ts";
+import { AppContext, AppEvents } from "./appActor.ts";
 import { lsActor } from "./lsActor.ts";
-import { welcomeActor } from "./welcomeActor.ts";
 import { PreviewContext, PreviewEvents } from "./preview/previewActor.ts";
 
 // used to prevent circular dependencies
@@ -24,10 +23,9 @@ type MachineActorRef<
 >;
 
 type System = {
-  app: ActorRefFrom<typeof appActor>;
+  app: MachineActorRef<AppContext, AppEvents>
   fileTree: MachineActorRef<FileTreeContext, FileTreeEvents>;
   preview: MachineActorRef<PreviewContext, PreviewEvents>;
-  welcome: ActorRefFrom<typeof welcomeActor>;
   ls: ActorRefFrom<typeof lsActor>;
 };
 
@@ -35,7 +33,6 @@ export const systemIds: Record<keyof System, keyof System> = {
   app: "app",
   fileTree: "fileTree",
   preview: "preview",
-  welcome: "welcome",
   ls: "ls",
 };
 

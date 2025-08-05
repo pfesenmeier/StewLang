@@ -6,6 +6,7 @@ import Preview from "./Preview.tsx";
 import Welcome from "./Welcome.tsx";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.ts";
 import { Base16Provider } from "../colors/Base16Context.tsx";
+import ColorPreview from "./ColorPreview.tsx";
 
 export default function App({ rootDir }: { rootDir: string }) {
   const { fileTree: context, app: appContext, preview, welcomeIsOpen } = useApp(
@@ -18,6 +19,7 @@ export default function App({ rootDir }: { rootDir: string }) {
       <Box width={columns} flexDirection="column">
         {welcomeIsOpen ? <Welcome /> : (
           <Box flexDirection="column">
+            <ColorPreview />
             <Selected appContext={appContext} />
             <FilePicker context={context} />
             <Preview preview={preview} />

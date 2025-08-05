@@ -18,40 +18,34 @@ export function useApp(cwd: string) {
     ({ context }) => context,
   );
 
+  const appRef = getActor(system, "app")
   const appContext = useSelector(
-    getActor(system, "app"),
+    appRef,
     ({ context }) => context,
   );
 
-  const welcomeRef = getActor(system, "welcome");
   const welcomeIsOpen = useSelector(
-    welcomeRef,
-    (machine) => machine?.status === "active",
+    appRef,
+    (machine) => machine?.matches("welcome"),
   );
 
-  // langRef.subscribe((snapshot) => {
-  //   console.log(snapshot.value)
-  // })
-
   useInput((input, key) => {
-    const sendFileTree = fileTreeRef.send;
-    // TODO welcomeRef is unique since will be torn down
-    const sendWelcome = welcomeRef?.send ?? function () {};
+    const send = appRef.send;
 
-    if (welcomeIsOpen) {
-      sendWelcome({ type: "close" });
+    if (key.return) {
+      send({ type: "enter" })
     } else if (input === "q") {
       Deno.exit(0);
     } else if (key.downArrow) {
-      sendFileTree({ type: "next" });
+      send({ type: "down" });
     } else if (key.upArrow) {
-      sendFileTree({ type: "previous" });
+      send({ type: "up" });
     } else if (key.leftArrow) {
-      sendFileTree({ type: "up" });
+      send({ type: "left" });
     } else if (key.rightArrow) {
-      sendFileTree({ type: "in" });
+      send({ type: "right" });
     } else if (input === " ") {
-      sendFileTree({ type: "toggle" });
+      send({ type: "space" });
       // } else if (key.tab && key.shift) {
       //   send({ type: "focusPrevious" });
       // } else if (key.tab) {
