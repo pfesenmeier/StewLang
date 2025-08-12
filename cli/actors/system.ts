@@ -23,7 +23,7 @@ type MachineActorRef<
 >;
 
 type System = {
-  app: MachineActorRef<AppContext, AppEvents>
+  app: MachineActorRef<AppContext, AppEvents>;
   fileTree: MachineActorRef<FileTreeContext, FileTreeEvents>;
   preview: MachineActorRef<PreviewContext, PreviewEvents>;
   ls: ActorRefFrom<typeof lsActor>;

@@ -4,6 +4,7 @@ type CurrentUpdateEvent = Extract<
   PreviewEvents,
   { type: "CurrentUpdateEvent" }
 >;
+
 export function setCurrent(
   { event: { data } }: { event: CurrentUpdateEvent },
 ): Partial<PreviewContext> {

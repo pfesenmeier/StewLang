@@ -47,20 +47,20 @@ export const appActor = setup({
               }),
             },
             tab: "preview",
-            shiftab: "selected"
+            shiftab: "selected",
           },
         },
         preview: {
           on: {
             tab: "selected",
-            shiftab: "browse"
-          }
+            shiftab: "browse",
+          },
         },
         selected: {
           on: {
             tab: "browse",
-            shiftab: "preview"
-          }
+            shiftab: "preview",
+          },
         },
         help: {},
       },

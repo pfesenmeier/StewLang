@@ -55,7 +55,6 @@ export const fileTreeActor = setup({
     file_lists: [],
     max_list: 3,
   }),
-  initial: "loading",
   on: {
     FileIsValidEvent: {
       actions: assign(({ event }) => ({
@@ -63,6 +62,7 @@ export const fileTreeActor = setup({
       })),
     },
   },
+  initial: "loading",
   states: {
     "loading": {
       invoke: {

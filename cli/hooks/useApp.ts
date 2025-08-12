@@ -18,7 +18,7 @@ export function useApp(cwd: string) {
     ({ context }) => context,
   );
 
-  const appRef = getActor(system, "app")
+  const appRef = getActor(system, "app");
   const appContext = useSelector(
     appRef,
     ({ context }) => context,
@@ -33,7 +33,7 @@ export function useApp(cwd: string) {
     const send = appRef.send;
 
     if (key.return) {
-      send({ type: "enter" })
+      send({ type: "enter" });
     } else if (input === "q") {
       Deno.exit(0);
     } else if (key.downArrow) {
