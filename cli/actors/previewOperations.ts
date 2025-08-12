@@ -1,5 +1,5 @@
 import { Recipe, StewLang } from "@stew/lang";
-import { AppParams, AppUpdate } from "./app2.ts";
+import { AppParams, AppUpdate } from "./app.ts";
 import { tryGetCurrentItem } from "./fileTreeOperations.ts";
 import { EventOutput } from "./helpers.ts";
 

@@ -12,7 +12,7 @@ import {
   scrollUp,
   toggleSelected,
 } from "./fileTreeOperations.ts";
-import { KeyPressEvents } from "../keyPressEvents.ts";
+import { KeyPressEvents } from "./keyPressEvents.ts";
 import { readFile } from "./readFile.ts";
 import { ls } from "./ls.ts";
 import {
@@ -66,7 +66,7 @@ type InternalEvents =
   | { type: "upReload" }
   | { type: "updatePreview" };
 
-export const app2 = setup({
+export const app = setup({
   types: {
     context: {} as AppContext,
     input: {} as AppInput,
@@ -76,9 +76,14 @@ export const app2 = setup({
     ls,
   },
 }).createMachine({
-  type: "parallel",
+  initial: "welcome",
   context: initialContext,
   states: {
+    welcome: {
+      on: {
+        enter: "firstStage"
+      }
+    },
     firstStage: {
       type: "parallel",
       states: {

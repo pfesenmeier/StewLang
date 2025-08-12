@@ -1,7 +1,7 @@
 import { dirname, join, relative, SEPARATOR } from "@std/path";
 import { DoneActorEvent } from "xstate";
 import { Recipe } from "@stew/lang";
-import { AppParams, AppUpdate } from "./app2.ts";
+import { AppParams, AppUpdate } from "./app.ts";
 
 export type FileTreeContext = {
   // absolute path

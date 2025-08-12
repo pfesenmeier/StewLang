@@ -1,6 +1,6 @@
 import { Box, Text } from "ink";
 import Recipe from "./Recipe.tsx";
-import { PreviewContext } from "../actors/preview/previewActor.ts";
+import { PreviewContext } from "../actors/previewOperations.ts";
 
 export default function Preview({ preview }: { preview: PreviewContext }) {
   const title = preview.recipe?.meta?.title ?? "";
