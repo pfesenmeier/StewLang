@@ -182,7 +182,6 @@ export const app = setup({
                     assign(setFileContents as any),
                     assign(trySetRecipe),
                     assign(trySetCurrentIngredient),
-                    // TODO re-implement "prevent select invalid file" logic
                     assign(previewSetFileTreeFileIsValid),
                   ],
                 },
