@@ -1,7 +1,9 @@
 import { useInput } from "ink";
-import { KeyPressEvents } from "../actors/keyPressEvents.ts";
+import { useSend } from "./mod.ts";
 
-export function useKeypressListener(send: (event: KeyPressEvents) => void) {
+export function useKeypressListener() {
+  const send = useSend();
+
   useInput((input, key) => {
     if (key.return) {
       send({ type: "enter" });

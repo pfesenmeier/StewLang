@@ -6,12 +6,13 @@ import Welcome from "./Welcome.tsx";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.ts";
 import { Base16Provider } from "../colors/Base16Context.tsx";
 import ColorPreview from "./ColorPreview.tsx";
-import { useApp } from "../hooks/useApp.ts";
+import { useWelcome } from "../hooks/mod.ts";
+import { useKeypressListener } from "../hooks/useKeypressListener.ts";
 
-export default function App({ rootDir }: { rootDir: string }) {
-  const { fileTree: context, selected, preview, welcomeIsOpen } = useApp(
-    rootDir,
-  );
+export default function App() {
+  useKeypressListener();
+  const welcomeIsOpen = useWelcome();
+
   const { columns } = useStdoutDimensions();
 
   return (
@@ -20,9 +21,9 @@ export default function App({ rootDir }: { rootDir: string }) {
         {welcomeIsOpen ? <Welcome /> : (
           <Box flexDirection="column">
             {/* <ColorPreview /> */}
-            <Selected context={selected} />
-            <FilePicker context={context} />
-            <Preview preview={preview} />
+            <Selected />
+            <FilePicker />
+            <Preview />
           </Box>
         )}
       </Box>
