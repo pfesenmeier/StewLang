@@ -93,6 +93,10 @@ export const app = setup({
           states: {
             browsing: {
               initial: "loading",
+              on: {
+                tab: "previewing",
+                shiftab: "selecting",
+              },
               states: {
                 loading: {
                   invoke: {
@@ -154,9 +158,16 @@ export const app = setup({
                 right: {
                   actions: assign(scrollNextIngredient),
                 },
+                tab: "selecting",
+                shiftab: "browsing",
               },
             },
-            selecting: {},
+            selecting: {
+              on: {
+                tab: "browsing",
+                shiftab: "previewing",
+              },
+            },
           },
         },
         // async reading source files. listens to "updatePreview" event

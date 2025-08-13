@@ -18,6 +18,14 @@ export function useSend() {
   return ref.send;
 }
 
-export function useWelcome() {
-  return AppActorContext.useSelector((a) => a.matches("welcome"));
+export function useAppState() {
+  // do not destructure here
+  return AppActorContext.useSelector((a) => {
+    return {
+      welcome: a.matches("welcome"),
+      preview: a.matches({ firstStage: { ui: "previewing" } }),
+      browsing: a.matches({ firstStage: { ui: "browsing" } }),
+      selecting: a.matches({ firstStage: { ui: "selecting" } }),
+    };
+  });
 }
