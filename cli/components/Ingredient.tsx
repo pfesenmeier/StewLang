@@ -35,7 +35,7 @@ export default function Ingredient(
       {ingredient.ingredients && (
         <Box flexDirection="column" paddingTop={1}>
           {ingredient.ingredients.map((subIngredient, index) => (
-            <Box>
+            <Box key={index}>
               <Ingredient
                 ingredient={subIngredient}
                 key={index}

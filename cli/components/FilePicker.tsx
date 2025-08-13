@@ -1,13 +1,13 @@
 import { Box, Text } from "ink";
-import type { FileTreeContext } from "../actors/fileTree/fileTreeActor.ts";
+import { useFileTree } from "../hooks/mod.ts";
 
-export default function FilePicker(
-  { context }: { context: FileTreeContext },
-) {
+export default function FilePicker() {
+  const fileTree = useFileTree();
+
   return (
     <>
       <Box>
-        {context.file_lists.map((file, index) => (
+        {fileTree.file_lists.map((file, index) => (
           <Box
             flexDirection="column"
             borderStyle="round"

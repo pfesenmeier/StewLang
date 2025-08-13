@@ -1,7 +1,9 @@
 import { Box, Text } from "ink";
-import type { AppContext } from "../actors/appActor.ts";
+import { useSelected } from "../hooks/mod.ts";
 
-export default function Selected({ appContext }: { appContext: AppContext }) {
+export default function Selected() {
+  const selected = useSelected();
+
   return (
     <Box
       flexDirection="column"
@@ -13,8 +15,8 @@ export default function Selected({ appContext }: { appContext: AppContext }) {
         Selected:
       </Text>
 
-      {appContext.selected_files.length > 0
-        ? appContext.selected_files.map((name, index) => (
+      {selected.selected_files.length > 0
+        ? selected.selected_files.map((name, index) => (
           <Text key={index} color="blueBright">{name}</Text>
         ))
         : <Text color="red">No files selected</Text>}
