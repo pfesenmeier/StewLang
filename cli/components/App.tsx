@@ -19,7 +19,7 @@ export default function App({ rootDir }: { rootDir: string }) {
       <Box width={columns} flexDirection="column">
         {welcomeIsOpen ? <Welcome /> : (
           <Box flexDirection="column">
-            <ColorPreview />
+            {/* <ColorPreview /> */}
             <Selected context={selected} />
             <FilePicker context={context} />
             <Preview preview={preview} />

@@ -81,14 +81,15 @@ export const app = setup({
   states: {
     welcome: {
       on: {
-        enter: "firstStage"
-      }
+        enter: "firstStage",
+      },
     },
     firstStage: {
       type: "parallel",
       states: {
         // states that determine how keypresses are interpretted
         ui: {
+          initial: "browsing",
           states: {
             browsing: {
               initial: "loading",
@@ -112,7 +113,9 @@ export const app = setup({
                     assign(fileTreeSetCurrentPreview),
                     raise({ type: "updatePreview" }),
                   ],
-                  target: "ready",
+                  always: {
+                    target: "ready",
+                  },
                 },
                 ready: {
                   on: {
@@ -159,17 +162,15 @@ export const app = setup({
         // async reading source files. listens to "updatePreview" event
         data: {
           initial: "ready",
-          entry: raise({ type: "updatePreview" }),
-          on: {
-            updatePreview: [{
-              guard: canPreview,
-              target: "previewing",
-            }, {
-              target: "ready",
-            }],
-          },
           states: {
-            ready: {},
+            ready: {
+              on: {
+                updatePreview: {
+                  guard: canPreview,
+                  target: "previewing",
+                },
+              },
+            },
             previewing: {
               invoke: {
                 src: readFile,

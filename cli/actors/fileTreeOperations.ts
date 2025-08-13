@@ -83,13 +83,20 @@ function scroll(
   if (!last) return context;
   if (last.current === null) return context;
 
+  let newCurrent = last.current;
+
   if (direction === "next" && last.current < last.items.length - 1) {
-    last.current++;
+    newCurrent++;
   }
 
   if (direction === "previous" && last.current > 0) {
-    last.current--;
+    newCurrent--;
   }
+
+  file_lists[file_lists.length - 1] = {
+    ...last,
+    current: newCurrent,
+  };
 
   return {
     fileTree: {
