@@ -26,6 +26,7 @@ export function useAppState() {
       preview: a.matches({ firstStage: { ui: "previewing" } }),
       browsing: a.matches({ firstStage: { ui: "browsing" } }),
       selecting: a.matches({ firstStage: { ui: "selecting" } }),
+      help: a.matches("help"),
     };
   });
 }

@@ -9,10 +9,11 @@ import ColorPreview from "./ColorPreview.tsx";
 import { useAppState } from "../hooks/mod.ts";
 import { useKeypressListener } from "../hooks/useKeypressListener.ts";
 import StatusBar from "./StatusBar.tsx";
+import Help from "./Help.tsx";
 
 export default function App() {
   useKeypressListener();
-  const { welcome, selecting, browsing, preview } = useAppState();
+  const { welcome, selecting, browsing, preview, help } = useAppState();
 
   const { columns } = useStdoutDimensions();
 
@@ -23,7 +24,8 @@ export default function App() {
         {selecting && <Selected />}
         {browsing && <FilePicker />}
         {preview && <Preview />}
-        <StatusBar />
+        {help && <Help />}
+        {!welcome && <StatusBar />}
       </Box>
     </Base16Provider>
   );

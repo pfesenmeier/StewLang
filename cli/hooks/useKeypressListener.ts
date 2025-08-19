@@ -23,6 +23,10 @@ export function useKeypressListener() {
       send({ type: "shiftab" });
     } else if (key.tab) {
       send({ type: "tab" });
+    } else if (input === "?") {
+      send({ type: "help" });
+    } else {
+      send({ type: "keyPress", data: input });
     }
   });
 }

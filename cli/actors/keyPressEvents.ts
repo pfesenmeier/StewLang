@@ -14,4 +14,9 @@ export type KeyPressEvents = {
   type: "tab";
 } | {
   type: "shiftab";
-};
+} | {
+  type: "help";
+} | {
+  type: "keyPress"
+  data: string
+}

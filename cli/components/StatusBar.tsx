@@ -3,14 +3,18 @@ import { useAppState } from "../hooks/mod.ts";
 
 export default function StatusBar() {
   const { preview, browsing, selecting } = useAppState();
-  let text = "";
-  if (preview) text = "PREVIEW";
-  if (browsing) text = "BROWSING";
-  if (selecting) text = "SELECTING";
+
+  const text = preview 
+    ? "PREVIEW"
+    : browsing 
+    ? "BROWSING"
+    : selecting 
+    ? "SELECTING"
+    : "WHOOPS"; 
 
   return (
     <Box backgroundColor="black">
-      <Text>-- {text} --</Text>
+      <Text color="white">-- {text} --</Text>
     </Box>
   );
 }

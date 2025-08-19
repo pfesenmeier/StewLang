@@ -81,8 +81,16 @@ export const app = setup({
   states: {
     welcome: {
       on: {
-        enter: "firstStage",
+        "*": "firstStage",
       },
+    },
+    help: {
+      id: "help",
+      on: {
+        // TODO what about second stage... maybe no need
+        // or turn this to "first stage help", etc..
+        "*": "firstStage.ui.hist",
+      }
     },
     firstStage: {
       type: "parallel",
@@ -90,7 +98,13 @@ export const app = setup({
         // states that determine how keypresses are interpretted
         ui: {
           initial: "browsing",
+          on: {
+            help: "#help",
+          },
           states: {
+            hist: {
+              type: "history"
+            },
             browsing: {
               initial: "loading",
               on: {

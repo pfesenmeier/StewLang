@@ -200,7 +200,6 @@ export function loadSelected(
   try {
     cwd = getCwd(params);
   } catch {
-    console.debug("treating folder as empty");
     return params.context;
   }
 
