@@ -15,11 +15,16 @@ export default function App() {
   useKeypressListener();
   const { welcome, selecting, browsing, preview, help } = useAppState();
 
-  const { columns } = useStdoutDimensions();
+  const { columns, rows } = useStdoutDimensions();
 
   return (
     <Base16Provider>
-      <Box width={columns} flexDirection="column">
+      <Box
+        width={columns}
+        height={rows - 1}
+        flexDirection="column"
+        justifyContent="space-between"
+      >
         {welcome && <Welcome />}
         {selecting && <Selected />}
         {browsing && <FilePicker />}

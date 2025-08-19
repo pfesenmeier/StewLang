@@ -90,7 +90,7 @@ export const app = setup({
         // TODO what about second stage... maybe no need
         // or turn this to "first stage help", etc..
         "*": "firstStage.ui.hist",
-      }
+      },
     },
     firstStage: {
       type: "parallel",
@@ -103,15 +103,20 @@ export const app = setup({
           },
           states: {
             hist: {
-              type: "history"
+              type: "history",
             },
             browsing: {
-              initial: "loading",
+              initial: "init",
               on: {
                 tab: "previewing",
                 shiftab: "selecting",
               },
               states: {
+                init: {
+                  always: [{ target: "loading", guard: rootChanged }, {
+                    target: "ready",
+                  }],
+                },
                 loading: {
                   invoke: {
                     src: "ls",
