@@ -7,5 +7,5 @@ if (import.meta.main) {
   const args = await parseArgs();
 
   console.clear();
-  render(args.rootDir);
+  render(args);
 }

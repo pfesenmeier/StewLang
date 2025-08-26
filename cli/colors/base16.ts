@@ -35,11 +35,22 @@ export type Base16 = {
 
 export type Base16Context = Base16 & {
   surfaceColors: ReturnType<typeof surfaceColors>;
-  colorsArray: ReturnType<typeof colorsArray>;
+  surfaceColorsIndexed: ReturnType<typeof surfaceColorsIndexed>;
 };
 
-export function colorsArray(base16: Base16) {
-  return Object.values(base16);
+export function surfaceColorsIndexed(base16: Base16) {
+  const surfaces = [
+    base16.base00,
+    base16.base03,
+    base16.base04,
+    base16.base02,
+  ];
+
+  return {
+    get(index: number) {
+      return surfaces[index % surfaces.length];
+    },
+  };
 }
 
 export function* surfaceColors(base16: Base16) {

@@ -1,13 +1,16 @@
 import { parseArgs as parseDenoArgs } from "@std/cli";
 
 export async function parseArgs() {
-  const args = parseDenoArgs(Deno.args, {});
+  const args = parseDenoArgs(Deno.args, {
+    boolean: ["debug"],
+  });
 
   // TODO accept list of files
 
   const rootDir = await parseFolder(args._);
 
   return {
+    debug: args.debug,
     rootDir,
   };
 }

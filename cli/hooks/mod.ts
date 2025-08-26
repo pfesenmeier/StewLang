@@ -1,5 +1,9 @@
 import { AppActorContext } from "../context/AppContext.tsx";
 
+export function useSnapshot() {
+  return AppActorContext.useSelector((sn) => sn);
+}
+
 export function usePreview() {
   return AppActorContext.useSelector(({ context }) => context.preview);
 }

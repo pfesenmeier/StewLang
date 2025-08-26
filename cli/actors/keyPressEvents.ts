@@ -17,6 +17,6 @@ export type KeyPressEvents = {
 } | {
   type: "help";
 } | {
-  type: "keyPress"
-  data: string
-}
+  type: "keyPress";
+  data: string;
+};

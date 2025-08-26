@@ -1,5 +1,9 @@
 import { createContext, useContext } from "react";
-import { type Base16Context, colorsArray, surfaceColors } from "./base16.ts";
+import {
+  type Base16Context,
+  surfaceColors,
+  surfaceColorsIndexed,
+} from "./base16.ts";
 import { catppuccinFrappe } from "./catppuccinFrappe.ts";
 
 const Base16Context = createContext<Base16Context>(null!);
@@ -10,7 +14,7 @@ export function Base16Provider(
   const theme = {
     ...catppuccinFrappe,
     surfaceColors: surfaceColors(catppuccinFrappe),
-    colorsArray: colorsArray(catppuccinFrappe)
+    surfaceColorsIndexed: surfaceColorsIndexed(catppuccinFrappe),
   };
 
   return (

@@ -12,6 +12,9 @@ export default function Preview() {
       borderColor={preview.error ? "red" : "green"}
       flexDirection="column"
     >
+      <Box justifyContent="center" paddingTop={1}>
+        <Text>Preview</Text>
+      </Box>
       <Box
         marginBottom={1}
       >
@@ -22,7 +25,7 @@ export default function Preview() {
       </Box>
       {preview.error && (
         <Text color="red">
-          Error: {preview.error?.message}
+          Error: {preview.error.message}
         </Text>
       )}
       {preview.recipe && (

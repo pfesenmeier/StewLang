@@ -1,4 +1,4 @@
-import { assign, raise, setup } from "xstate";
+import { assign, log, raise, setup } from "xstate";
 import {
   FileTreeContext,
   goUpDirectory,
@@ -214,6 +214,10 @@ export const app = setup({
                     assign(trySetCurrentIngredient),
                     assign(previewSetFileTreeFileIsValid),
                   ],
+                  target: "ready",
+                },
+                onError: {
+                  target: "ready",
                 },
               },
             },

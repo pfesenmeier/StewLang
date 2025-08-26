@@ -4,13 +4,13 @@ import { useAppState } from "../hooks/mod.ts";
 export default function StatusBar() {
   const { preview, browsing, selecting } = useAppState();
 
-  const text = preview 
+  const text = preview
     ? "PREVIEW"
-    : browsing 
+    : browsing
     ? "BROWSING"
-    : selecting 
+    : selecting
     ? "SELECTING"
-    : "WHOOPS"; 
+    : "WHOOPS";
 
   return (
     <Box backgroundColor="black" justifyContent="space-between" paddingX={2}>
