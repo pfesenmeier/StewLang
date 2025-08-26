@@ -36,6 +36,7 @@ export default function Help() {
   return (
     <Box flexDirection="column">
       <Text color="green">Help</Text>
+      <Text color="green">Press any key to go back</Text>
       {keys.map((item, index) => (
         <Text key={index}>
           <Text color="yellow">{item.key}</Text> - {item.does}

@@ -4,7 +4,6 @@ import Selected from "./Selected.tsx";
 import Preview from "./Preview.tsx";
 import Welcome from "./Welcome.tsx";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.ts";
-import { Base16Provider } from "../colors/Base16Context.tsx";
 import ColorPreview from "./ColorPreview.tsx";
 import { useAppState } from "../hooks/mod.ts";
 import { useKeypressListener } from "../hooks/useKeypressListener.ts";
@@ -18,20 +17,17 @@ export default function App() {
   const { columns, rows } = useStdoutDimensions();
 
   return (
-    <Base16Provider>
       <Box
         width={columns}
         height={rows - 1}
         flexDirection="column"
-        justifyContent="space-between"
       >
+        {!welcome && <StatusBar />}
         {welcome && <Welcome />}
         {selecting && <Selected />}
         {browsing && <FilePicker />}
         {preview && <Preview />}
         {help && <Help />}
-        {!welcome && <StatusBar />}
       </Box>
-    </Base16Provider>
   );
 }

@@ -13,8 +13,9 @@ export default function StatusBar() {
     : "WHOOPS"; 
 
   return (
-    <Box backgroundColor="black">
+    <Box backgroundColor="black" justifyContent="space-between" paddingX={2}>
       <Text color="white">-- {text} --</Text>
+      <Text color="white">press "?" for help</Text>
     </Box>
   );
 }

@@ -35,7 +35,12 @@ export type Base16 = {
 
 export type Base16Context = Base16 & {
   surfaceColors: ReturnType<typeof surfaceColors>;
+  colorsArray: ReturnType<typeof colorsArray>;
 };
+
+export function colorsArray(base16: Base16) {
+  return Object.values(base16);
+}
 
 export function* surfaceColors(base16: Base16) {
   let current = 0;
