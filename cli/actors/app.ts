@@ -196,6 +196,7 @@ export const app = setup({
             },
             selecting: {
               on: {
+                left: "previewing",
                 tab: "browsing",
                 shiftab: "previewing",
               },
