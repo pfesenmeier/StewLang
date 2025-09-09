@@ -37,6 +37,10 @@ export function isOnFolder(params: AppParams): boolean {
   return tryGetCurrentItem(params)?.endsWith("/") ?? false;
 }
 
+export function isOnStewLangFile(params: AppParams): boolean {
+  return tryGetCurrentItem(params)?.endsWith(".sw") ?? false;
+}
+
 export function splitPath(path: string) {
   const relpath = relative(root, path);
 

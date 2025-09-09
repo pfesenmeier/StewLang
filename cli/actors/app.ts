@@ -4,6 +4,7 @@ import {
   goUpDirectory,
   initialFileTreeContext,
   isOnFolder,
+  isOnStewLangFile,
   loadFiles,
   loadSelected,
   lsInput,
@@ -161,6 +162,9 @@ export const app = setup({
                     right: [{
                       guard: isOnFolder,
                       target: "loading",
+                    }, {
+                      guard: isOnStewLangFile,
+                      target: "#previewing",
                     }, { target: "ready" }],
                     space: {
                       actions: assign(toggleSelected),
@@ -170,6 +174,7 @@ export const app = setup({
               },
             },
             previewing: {
+              id: "previewing",
               on: {
                 left: {
                   actions: assign(scrollPreviousIngredient),
