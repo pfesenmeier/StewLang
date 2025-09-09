@@ -25,6 +25,17 @@ export function canPreview({ context }: AppParams): boolean {
   return context.preview.current !== null;
 }
 
+export function isOnFirstIngredient({ context }: AppParams): boolean {
+  const { currentIngredient } = context.preview;
+  return currentIngredient === 0 || currentIngredient === null;
+}
+
+export function isOnLastIngredient({ context }: AppParams): boolean {
+  const { currentIngredient, recipe } = context.preview;
+  if (!recipe || recipe.ingredients.length === 0) return false;
+  return currentIngredient === recipe.ingredients.length - 1;
+}
+
 export function setCurrentToFirstRecipe(
   { context: { preview } }: AppParams,
 ): Update {

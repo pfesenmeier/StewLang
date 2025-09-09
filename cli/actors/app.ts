@@ -20,6 +20,8 @@ import {
   canPreview,
   fileTreeSetCurrentPreview,
   initialPreviewContext,
+  isOnFirstIngredient,
+  isOnLastIngredient,
   PreviewContext,
   previewSetFileTreeFileIsValid,
   readInput,
@@ -176,12 +178,18 @@ export const app = setup({
             previewing: {
               id: "previewing",
               on: {
-                left: {
+                left: [{
+                  guard: isOnFirstIngredient,
+                  target: "browsing",
+                }, {
                   actions: assign(scrollPreviousIngredient),
-                },
-                right: {
+                }],
+                right: [{
+                  guard: isOnLastIngredient,
+                  target: "selecting",
+                }, {
                   actions: assign(scrollNextIngredient),
-                },
+                }],
                 tab: "selecting",
                 shiftab: "browsing",
               },
