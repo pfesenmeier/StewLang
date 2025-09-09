@@ -7,7 +7,6 @@
     "@std/cli": "jsr:@std/cli@^1.0.19",
     "@std/fs": "jsr:@std/fs@^1.0.18",
     "@std/path": "jsr:@std/path@^1.1.0",
-    "@types/ink": "npm:@types/ink@^2.0.3",
     "@types/react": "npm:@types/react@^19.1.7",
     "@xstate/react": "npm:@xstate/react@^6.0.0",
     "ink": "npm:ink@^6.1.0",

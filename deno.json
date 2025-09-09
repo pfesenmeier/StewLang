@@ -1,3 +1,6 @@
 {
   "workspace": ["./lang", "./cli"],
+  "tasks": {
+    "run": "deno run -A cli/main.ts"
+  }
 } 

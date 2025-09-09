@@ -512,7 +512,6 @@
           "jsr:@std/cli@^1.0.19",
           "jsr:@std/fs@^1.0.18",
           "jsr:@std/path@^1.1.0",
-          "npm:@types/ink@^2.0.3",
           "npm:@types/react@^19.1.7",
           "npm:@xstate/react@6",
           "npm:ink-big-text@2",
