@@ -12,17 +12,10 @@ export default function Preview() {
       borderColor={preview.error ? "red" : "green"}
       flexDirection="column"
     >
-      <Box justifyContent="center" paddingTop={1}>
-        <Text>Preview</Text>
-      </Box>
-      <Box
-        marginBottom={1}
-      >
-        <Text>
-          {name && `Name: ${name}`}
-          {title && `Title: ${title}`}
-        </Text>
-      </Box>
+      <Text>
+        {name && `Name: ${name}`}
+        {title && `Title: ${title}`}
+      </Text>
       {preview.error && (
         <Text color="red">
           Error: {preview.error.message}

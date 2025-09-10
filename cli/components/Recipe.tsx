@@ -10,7 +10,7 @@ export default function Recipe(
   const tabColors: string[] = [];
 
   for (let i = 0; i < recipe.ingredients.length; i++) {
-    const color = theme.surfaceColors.next().value!;
+    const color = theme.surfaceColorsIndexed.get(i);
     tabColors.push(color);
   }
 

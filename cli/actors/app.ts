@@ -155,7 +155,7 @@ export const app = setup({
                     },
                     left: {
                       actions: assign(goUpDirectory),
-                      target: "updatingPreview",
+                      target: "init",
                     },
                     upReload: [{
                       guard: rootChanged,

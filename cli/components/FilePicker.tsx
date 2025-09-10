@@ -17,23 +17,29 @@ export default function FilePicker() {
           paddingX={2}
           key={index}
         >
-          {file.items.map((name, index) => (
-            <Text
-              key={name}
-              backgroundColor={file.current === index
-                ? colors.base01
-                : file.selected.includes(index)
-                ? colors.base07
-                : undefined}
-              color={file.current === index
-                ? colors.base0E
-                : file.selected.includes(index)
-                ? colors.base08
-                : colors.base05}
-            >
-              {name}
-            </Text>
-          ))}
+          {file.items.map((name, index) => {
+            const isCurrent = file.current === index;
+            const isSelected = file.selected.includes(index);
+            
+            return (
+              <Text
+                key={name}
+                inverse={isCurrent && isSelected}
+                backgroundColor={isCurrent
+                  ? colors.base01
+                  : isSelected
+                  ? colors.base07
+                  : undefined}
+                color={isCurrent
+                  ? colors.base0E
+                  : isSelected
+                  ? colors.base00
+                  : colors.base05}
+              >
+                {name}
+              </Text>
+            );
+          })}
         </Box>
       ))}
     </Box>
