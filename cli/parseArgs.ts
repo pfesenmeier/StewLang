@@ -5,12 +5,29 @@ export async function parseArgs() {
     boolean: ["debug"],
   });
 
-  // TODO accept list of files
+  const defaults = {
+      debug: args.debug,
+      command: "run" as const,
+      rootDir: "."
+  }
 
-  const rootDir = await parseFolder(args._);
+  if (args._.length === 0) return defaults
+
+  if (args._.length === 1) {
+    return {
+      ...defaults,
+      command: args._[0].toString()
+    }
+  }
+
+  // TODO list of files
+  const [command, ...folders] = args._
+  
+  const rootDir = await parseFolder(folders);
 
   return {
-    debug: args.debug,
+    ...defaults,
+    command,
     rootDir,
   };
 }
@@ -34,5 +51,5 @@ async function parseFolder(args: (string | number)[]) {
 }
 
 const help = `
-Usage: stew <folder>
+Usage: stew [<run|check>] [<folder>]
 `;

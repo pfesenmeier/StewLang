@@ -1,6 +1,7 @@
 {
   "workspace": ["./lang", "./cli"],
   "tasks": {
-    "run": "deno run -A cli/main.ts"
+    "run": "deno run --allow-env --allow-read cli/main.ts",
+    "compile": "deno compile --allow-env --allow-read --no-check --output stew cli/main.ts"
   }
 } 
