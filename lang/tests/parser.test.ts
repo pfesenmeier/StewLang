@@ -78,7 +78,7 @@ Deno.test("handles ingredient with amount", () => {
     name: ["jelly"],
     amount: {
       amount: 2,
-      unit: "TBSP",
+      unit: "tablespoon",
     },
   };
 
@@ -249,7 +249,7 @@ Deno.test("handles full example", () => {
     name: ["potatoes"],
     amount: {
       amount: 2,
-      unit: "LB",
+      unit: "lb",
     },
   };
   const stock: Ingredient = {
