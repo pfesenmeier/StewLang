@@ -8,9 +8,9 @@ if (import.meta.main) {
   const args = await parseArgs();
 
   if (args.command === "check") {
-    await check(args.rootDir)
+    await check(args.rootDir);
+  } else {
+    console.clear();
+    render(args);
   }
-
-  console.clear();
-  render(args);
 }
