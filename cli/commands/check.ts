@@ -1,38 +1,38 @@
-import { expandGlob } from "jsr:@std/fs/expand-glob";
+import { expandGlob } from "@std/fs/expand-glob";
 import { join, relative } from "@std/path";
-import { StewLang } from "@stew/lang";
+import { StewError, StewLang } from "@stew/lang";
 
-// TODO table export to nushell
-export async function check(directory: string, csv = false) {
-  // TODO -- does stewlang have an entrypoint?
-  const glob = join(directory, "**", "*.sw");
-  const lang = new StewLang();
-  let success = 0;
-  let total = 0;
+export async function check(directory: string) {
+  let isSuccess = true;
 
-  const entries = await Array.fromAsync(expandGlob(glob));
-  const paths = entries.map((entry) => relative(".", entry.path));
-  const longestPath = paths.reduce((p, c) => Math.max(p, c.length), 0);
-
-  for (const path of paths) {
-    total++;
-
-    try {
-      const contents = await Deno.readTextFile(path);
-      lang.read(contents);
-    } catch (e) {
-      const err = e as Error;
-      console.error(
-        `%cError:   ${path.padEnd(longestPath)}\t${err.message}`,
+  console.info("File\tOutcome\tLine\tError\tHint");
+  for await (const [recipe, path] of readAllStewFiles(directory)) {
+    if (recipe instanceof StewError) {
+      console.info(
+        `%c${path}\tError\t${recipe.line}\t${recipe.message}\t${
+          recipe.hint ?? ""
+        }`,
         "color: red",
       );
+      isSuccess = false;
       continue;
     }
 
-    console.info(`%cSuccess: ${path}`, "color: green");
-    success += 1;
+    console.info(`%c${path}\tSuccess\t\t\t`, "color: green");
   }
 
-  console.log();
-  console.log(`%cResult:\t${success}/${total}`, "color: blue");
+  if (!isSuccess) {
+    Deno.exit(1);
+  }
+}
+
+async function* readAllStewFiles(directory: string) {
+  const glob = join(directory, "**", "*.sw");
+  const lang = new StewLang();
+
+  for await (const entry of expandGlob(glob)) {
+    const path = relative(".", entry.path);
+    const contents = await Deno.readTextFile(path);
+    yield [lang.read(contents), path] as const;
+  }
 }

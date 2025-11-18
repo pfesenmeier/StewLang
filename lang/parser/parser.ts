@@ -1,26 +1,28 @@
-import {
-  type Amount,
-  parseAmount,
-  parseAmountNumber,
-} from "../scanner/amount.ts";
+import { type Amount, parseAmount } from "../scanner/amount.ts";
 import { type Token, TokenType } from "../scanner/scanner.ts";
 import type { Ingredient } from "./ingredient.ts";
 import type { Recipe } from "./recipe.ts";
 import type { Step, StepWord } from "./step.ts";
+import { StewError } from "./StewError.ts";
 
 export class Parser {
+  private line = 0;
   private index = 0;
   private ingredients: Ingredient[] = [];
   private meta: Record<string, string> | null = null;
 
   constructor(private tokens: Token[]) {}
 
-  public parse(): Recipe {
-    this.recipe();
-    return {
-      ingredients: this.ingredients,
-      ...(this.meta && { meta: this.meta }),
-    };
+  public parse(): Recipe | StewError {
+    try {
+      this.recipe();
+      return {
+        ingredients: this.ingredients,
+        ...(this.meta && { meta: this.meta }),
+      };
+    } catch (e) {
+      return e as StewError;
+    }
   }
 
   private recipe() {
@@ -30,7 +32,7 @@ export class Parser {
       while (this.match([TokenType.WORD])) {
         values.push(this.getPrevious().value);
       }
-      this.match([TokenType.NEWLINE]);
+      this.consumeNewline();
 
       if (this.meta === null) {
         this.meta = {};
@@ -40,7 +42,7 @@ export class Parser {
     }
     while (!this.isAtEnd()) {
       // handle newlines
-      if (!this.match([TokenType.NEWLINE, TokenType.WHITESPACE])) {
+      if (!this.consumeNewline() || this.match([TokenType.WHITESPACE])) {
         this.ingredients.push(this.ingredient());
       }
     }
@@ -60,7 +62,11 @@ export class Parser {
     }
 
     if (name.length === 0) {
-      throw new Error("expected recipe name");
+      throw new StewError(
+        "expected recipe name",
+        this.line,
+        `Found symbol: ${this.getCurrent().value}`,
+      );
     }
 
     if (this.match([TokenType.LEFT_PARENS])) {
@@ -121,7 +127,9 @@ export class Parser {
 
   step(): Step {
     const text: StepWord[] = [];
-    while (this.match([TokenType.WORD, TokenType.IDENTIFIER, TokenType.NUMBERWORD])) {
+    while (
+      this.match([TokenType.WORD, TokenType.IDENTIFIER, TokenType.NUMBERWORD])
+    ) {
       const previous = this.getPrevious();
       if ([TokenType.WORD, TokenType.NUMBERWORD].includes(previous.type)) {
         text.push(previous.value);
@@ -162,7 +170,11 @@ export class Parser {
 
   private consumeNewline() {
     if (this.match([TokenType.NEWLINE])) {
-      // consume
+      this.line++;
+
+      return true;
     }
+
+    return false;
   }
 }
