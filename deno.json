@@ -4,4 +4,4 @@
     "run": "deno run --allow-env --allow-read cli/main.ts",
     "compile": "deno compile --allow-env --allow-read --no-check --output stew cli/main.ts"
   }
-} 
+}

@@ -180,7 +180,7 @@ Deno.test("handles number words in steps", () => {
       },
     ],
   });
-})
+});
 
 Deno.test("handles trailing newline separated list of ingredients", () => {
   const input = [

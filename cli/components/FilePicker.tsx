@@ -20,7 +20,7 @@ export default function FilePicker() {
           {file.items.map((name, index) => {
             const isCurrent = file.current === index;
             const isSelected = file.selected.includes(index);
-            
+
             return (
               <Text
                 key={name}

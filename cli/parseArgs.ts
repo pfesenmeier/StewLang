@@ -3,12 +3,12 @@ import { parseArgs as parseDenoArgs } from "@std/cli";
 export const commands = {
   run: "run",
   check: "check",
-} as const
+} as const;
 
 function parseCommand(arg: string) {
-  const dict: Record<string, keyof typeof commands | undefined> = commands
-  
-  return dict[arg]
+  const dict: Record<string, keyof typeof commands | undefined> = commands;
+
+  return dict[arg];
 }
 
 export async function parseArgs() {
@@ -22,7 +22,7 @@ export async function parseArgs() {
 
   const [commandArg, ...folders] = args._;
 
-  const command = parseCommand(commandArg)
+  const command = parseCommand(commandArg);
 
   if (!command) {
     console.log(help);

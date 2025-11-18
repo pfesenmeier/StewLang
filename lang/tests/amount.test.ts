@@ -48,18 +48,18 @@ Deno.test("it handles fractions", () => {
   const { amount, unit } = parseAmount(input)!;
   assertEquals(unit, UnitType.teaspoon);
   assertEquals(amount, 0.5);
-})
+});
 
 Deno.test("it handles numbers without units", () => {
   const input = "4";
   const { amount, unit } = parseAmount(input)!;
   assertEquals(unit, undefined);
   assertEquals(amount, 4);
-})
+});
 
 Deno.test("it parses unknown units as strings", () => {
   const input = "1pinch";
   const { amount, unit } = parseAmount(input)!;
   assertEquals(unit, "pinch");
   assertEquals(amount, 1);
-})
+});

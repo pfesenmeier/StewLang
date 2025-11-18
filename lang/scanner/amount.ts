@@ -16,7 +16,7 @@ export function parseAmount(str: string): Amount | null {
     }
   }
 
-  unitIndex++
+  unitIndex++;
 
   const amountStr = str.slice(0, unitIndex);
   const amount = parseAmountNumber(amountStr);
@@ -53,14 +53,13 @@ export function parseUnit(unitInput: string): UnitType | string | null {
 
   unitInput = unitInput.toLowerCase();
 
-  if (["\"", "inch", "in", "inches"].includes(unitInput)) {
-    return UnitType.inch
+  if (['"', "inch", "in", "inches"].includes(unitInput)) {
+    return UnitType.inch;
   }
 
   if (["g", "gram", "grams"].includes(unitInput)) {
     return UnitType.gram;
   }
-
 
   if (["oz"].includes(unitInput)) {
     return UnitType.oz;
@@ -95,10 +94,10 @@ export function parseUnit(unitInput: string): UnitType | string | null {
   }
 
   if (unitInput.length > 0) {
-    return unitInput
+    return unitInput;
   }
 
-  return null
+  return null;
 }
 
 export const UnitType = {
