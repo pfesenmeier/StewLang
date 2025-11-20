@@ -11,7 +11,7 @@ export class Parser {
   private ingredients: Ingredient[] = [];
   private meta: Record<string, string> | null = null;
 
-  constructor(private tokens: Token[]) {}
+  constructor(private tokens: Token[]) { }
 
   public parse(): Recipe | StewError {
     try {
@@ -65,7 +65,7 @@ export class Parser {
       throw new StewError(
         "expected recipe name",
         this.line,
-        `Found symbol: ${this.getCurrent().value}`,
+        `Found symbol: "${this.displayValue()}"`,
       );
     }
 
@@ -149,6 +149,11 @@ export class Parser {
     }
 
     return false;
+  }
+
+  private displayValue() {
+    const value = this.getCurrent().value;
+    return value === "\n" ? "\\n" : value;
   }
 
   private advance() {
