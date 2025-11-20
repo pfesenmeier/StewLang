@@ -39,6 +39,12 @@ export class Scanner {
               current,
             );
             break;
+          case "=":
+            yield this.createToken(
+              TokenType.Equals,
+              current,
+            );
+            break;
           case ")":
             yield this.createToken(
               TokenType.RIGHT_PARENS,
@@ -138,6 +144,10 @@ export class Scanner {
     return input.match(/[A-Za-z\-\"]/) !== null;
   }
 
+  private isEqualsCharacter(input: string) {
+    return input.match(/[=]/) !== null;
+  }
+
   private isNumber(input: string) {
     return input.match(/[0-9]/) !== null;
   }
@@ -185,6 +195,8 @@ export const TokenType = {
   NEWLINE: "NEWLINE",
   WHITESPACE: "WHITESPACE",
   NUMBERWORD: "NUMBERWORD",
+
+  Equals: "Equals",
 
   IDENTIFIER: "IDENTIFIER",
   META: "META",
